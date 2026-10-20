@@ -1,0 +1,4 @@
+interface:
+  display_name: "剪辑 Agent 用户版"
+  short_description: "把视频或稿件交给我，通过对话完成口播剪辑、讲解动画和纯AI视频制作"
+  default_prompt: "使用 $hanxu-video-edit 帮我开始剪辑，需要什么信息就问我。"

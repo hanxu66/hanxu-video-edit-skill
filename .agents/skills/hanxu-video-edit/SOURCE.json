@@ -1,0 +1,147 @@
+{
+  "version": "0.3.3-friends",
+  "builtAt": "2026-10-20T05:48:09.892110+00:00",
+  "origin": "current self-use source files, not GitHub package",
+  "sources": [
+    {
+      "source": "working-files/system-optimization/short-video-workflow-v3/skills/口播剪辑.md",
+      "source_sha256": "648cfb87c890aa3d62031ec9ca5d110c7e38a9aa457e14be24665b491b43f3a1",
+      "target": "references/口播剪辑.md",
+      "target_sha256": "27b31c79acd8bf6ad7e0a81d139591bd7198e8b8212055263451144ac27d40b0",
+      "sourceUnchanged": true,
+      "initial_target_sha256": "47c52c89edec20fc688da6679a9986a74bf1efab001f6dbb183061df2847a396"
+    },
+    {
+      "source": "working-files/system-optimization/short-video-workflow-v3/skills/动画视频制作.md",
+      "source_sha256": "00bef6772057c43b494e9bd6a7a191ab883f666ea34d9210c88f39b3c857d40b",
+      "target": "references/动画视频制作.md",
+      "target_sha256": "a604c1a1eb18ef6ecfa8e452b2b1dbdec87efc7c77360d4c316fe4de01784503",
+      "sourceUnchanged": true,
+      "initial_target_sha256": "a604c1a1eb18ef6ecfa8e452b2b1dbdec87efc7c77360d4c316fe4de01784503"
+    },
+    {
+      "source": "working-files/system-optimization/short-video-workflow-v3/skills/references/动画类型与分镜方法.md",
+      "source_sha256": "7a67046d9024def6ece5d1c729e983d80b0aeaa49b92f724d0e6f30d8616ed45",
+      "target": "references/动画类型与分镜方法.md",
+      "target_sha256": "f6a1d09843488faffcc4e84805d93cf786b73c13183e4961d5e0817b732c6c86",
+      "sourceUnchanged": true,
+      "initial_target_sha256": "f6a1d09843488faffcc4e84805d93cf786b73c13183e4961d5e0817b732c6c86"
+    },
+    {
+      "source": "working-files/system-optimization/short-video-workflow-v3/standards/剪辑执行标准.md",
+      "source_sha256": "e07bd0e633082ae4828f94fd30fa09971188b3d3e39c54e53375986b27db2f99",
+      "target": "references/剪辑执行标准.md",
+      "target_sha256": "db732580dc82890149c66c9b21a6fa262186271c069bfbf28e1a09ed931e45e7",
+      "sourceUnchanged": true,
+      "initial_target_sha256": "9cb187db1e587c2771c1bc1bf11f4ad4b277a3e9b2a7f23e7f92da11548b4ef5"
+    },
+    {
+      "source": "working-files/system-optimization/short-video-workflow-v3/skills/产品介绍视频.md",
+      "source_sha256": "acb540a5bf984a44af2289e2d86545f2cafa3c3a8c57d10448dcfc9f39ea885a",
+      "target": "references/产品介绍视频.md",
+      "target_sha256": "f712f9aa5c11a2a29f1dedb426fe9c2384183e321023bf582e80f97954ea5f76",
+      "sourceUnchanged": true,
+      "initial_target_sha256": "f712f9aa5c11a2a29f1dedb426fe9c2384183e321023bf582e80f97954ea5f76"
+    },
+    {
+      "source": "tools/inspect_video_editing_environment.py",
+      "source_sha256": "164f9462f0fb479867c9afa813a9fbec556a1c2f2caf28149ea7c1b530f2cd2b",
+      "target": "scripts/inspect_video_editing_environment.py",
+      "target_sha256": "164f9462f0fb479867c9afa813a9fbec556a1c2f2caf28149ea7c1b530f2cd2b",
+      "sourceUnchanged": true,
+      "initial_target_sha256": "164f9462f0fb479867c9afa813a9fbec556a1c2f2caf28149ea7c1b530f2cd2b"
+    },
+    {
+      "source": "working-files/system-optimization/short-video-workflow-v3/skills/直播切片剪辑.md",
+      "source_sha256": "94fa6f30ce9d0746b285f847e664def8da3f6c20c7dee58f95d4b2c2bd7f2b03",
+      "target": "references/直播切片剪辑.md",
+      "target_sha256": "c3095a085a43627d1006f0edc9390bfcda6e7d6a38b8e1af229aff91c9da03e0",
+      "sourceUnchanged": true
+    },
+    {
+      "source": "working-files/system-optimization/short-video-workflow-v3/skills/学员反馈剪辑.md",
+      "source_sha256": "f93357d7322c308cdf0f6ce1e33a9fec1cad2cbb21f1e5b730853e164959342c",
+      "target": "references/访谈剪辑.md",
+      "target_sha256": "04d3b715f21160e748bc428615b82918ed3bc8cbc318dfdf774ddf2567ecec7b",
+      "sourceUnchanged": true
+    }
+  ],
+  "adaptation": [
+    "对话入口和本地状态",
+    "身份与数值参数改为使用者配置",
+    "移除个人历史授权/私人素材要求/内部台账",
+    "补齐动画制作与声音入口",
+    "用户确认完整效果默认，身份内容由使用者填写，其余支持局部覆盖",
+    "素材保护副本、失联可登记与用户暂停状态",
+    "按阶段检查工具与容量，实际小样直接交付",
+    "不进入与剪辑无关的宿主维护分支",
+    "补齐访谈、用户反馈、直播切片及回放卡片路由；按场景冻结默认，不回改暂停任务"
+  ],
+  "runtimeVerification": "Current Mac: final native livestream revision with73 captions and cover exported. Full native-folder backup restored to exact registered test path and re-exported; SRT/cover bytes and audio stream identical, video SSIM0.998128. Native jypack restore lost speed and is excluded from final delivery. Cross-machine and fresh-user setup remain untested; first preview checks actual delivery path.",
+  "routingSource": {
+    "source": "working-files/system-optimization/short-video-workflow-v3/agents/剪辑Agent.md",
+    "sha256": "d67440803f5128654201ce548cc75a4fae41158927ae523ed1764e7abeaf9336",
+    "adaptedAs": "references/路由与检查点.md and SKILL.md"
+  },
+  "updatedAt": "2026-10-20T20:33:15.234479+08:00",
+  "defaultLook": {
+    "path": "assets/default-look.json",
+    "parameter_provenance": "read-only current self-use method and saved beauty/body/text style parameters; user identity text and local paths removed",
+    "cross_machine_render_verified": false
+  },
+  "localFiles": {
+    "SKILL.md": "e75e83763bfe1610e6f4ffc6ef3c0e9ed9be80622d560a08f45bcadddb699e59",
+    "agents/openai.yaml": "c40b2150dace4d56c65e53628c6f6d1e2bdaf9234986f31eb0061a89876ed99c",
+    "assets/default-look.json": "6ffa0451a848a9bed2524aba86de7a3e9a548ef96d7bac0ed085465758fa0e85",
+    "assets/starter/AGENTS.md": "75a69f2b0797ab8fdcad62e86f1a76275a6973dfac68cdff12c72d454af43193",
+    "assets/starter/开始使用.md": "857b2aadbb8c9e5a3c482d3bd29987a926cde5a362efe6fe60ca4528f172426d",
+    "references/产品介绍视频.md": "f712f9aa5c11a2a29f1dedb426fe9c2384183e321023bf582e80f97954ea5f76",
+    "references/剪辑执行标准.md": "db732580dc82890149c66c9b21a6fa262186271c069bfbf28e1a09ed931e45e7",
+    "references/动画类型与分镜方法.md": "f6a1d09843488faffcc4e84805d93cf786b73c13183e4961d5e0817b732c6c86",
+    "references/动画视频制作.md": "a604c1a1eb18ef6ecfa8e452b2b1dbdec87efc7c77360d4c316fe4de01784503",
+    "references/口播剪辑.md": "27b31c79acd8bf6ad7e0a81d139591bd7198e8b8212055263451144ac27d40b0",
+    "references/最终工程交付.md": "23046d09cbd43cfa2d4242f6ba74b57e59c1a532ff8ec538686905c041d3fe62",
+    "references/环境与工具.md": "dbf0b4a34eb37340fa9a25ed2743dbc9474fc59923cc6133b185b155c4ea62aa",
+    "references/用户配置与声音.md": "2faa38976b23ad5278a06f93e84dc566d22dd3dbd1f1b38e682311feb82e395e",
+    "references/直播切片剪辑.md": "c3095a085a43627d1006f0edc9390bfcda6e7d6a38b8e1af229aff91c9da03e0",
+    "references/访谈剪辑.md": "04d3b715f21160e748bc428615b82918ed3bc8cbc318dfdf774ddf2567ecec7b",
+    "references/试用问题与局部返修.md": "6758f0697cf399254ad11cb9d0724555d743752cdc5193497fd7dc23dc503ddd",
+    "references/路由与检查点.md": "7eee71b08d43cb72353493d87d210c5f52fbca100bc0074b7d8a7192776958e7",
+    "references/首次上手与依赖.md": "83399eb624903df352d898328c2507e7704431bcb6100900d26f297e55c8c9de",
+    "references/默认效果与调整.md": "918e9d6edcf0b83484c6f3cae6ea4e7b468bef838751d8c8b7cfc03eef84dd55",
+    "scripts/delivery.py": "50dd3d32cad5f14b9787609c5d30b2bea926fbb5088155ae1ef4c8419ca7fa94",
+    "scripts/doctor.py": "fbabd41c1b7b8381731d1a334893f9c5849818c2974f7509a6cacd1ab9bd63b3",
+    "scripts/inspect_video_editing_environment.py": "164f9462f0fb479867c9afa813a9fbec556a1c2f2caf28149ea7c1b530f2cd2b",
+    "scripts/review_media.py": "4391a3f26bd178b56043b2b33adbbae88a13c18fa7c078cdc18e30d7227ec54d",
+    "scripts/session.py": "bd517b9622c673b2503123be86fc95e2096521b86da4abb9f218f74739a99be1",
+    "scripts/setup_local_dependencies.py": "a12e3e14e585f0e8b03e6f610071d70b38eadd73af1ad081cc8b69f52da48f60"
+  },
+  "packagedAt": "2026-10-20T20:33:15.241979+08:00",
+  "scopeVerification": {
+    "user_declared_capabilities": [
+      "访谈",
+      "单人访谈",
+      "用户访谈",
+      "直播切片",
+      "回放卡片式短视频"
+    ],
+    "methods_read": [
+      "剪辑Agent",
+      "直播切片剪辑",
+      "学员反馈剪辑"
+    ],
+    "pending": [
+      "一般访谈特定风格的既有实例",
+      "回放卡片版式的既有示例",
+      "新场景真实素材端到端验证"
+    ]
+  },
+  "localAdaptation": "GitHub and direct ZIP distribution for current trial version, with same native-readiness and handoff methods as0.3.2.",
+  "releaseType": "friend-trial-prerelease",
+  "distribution": {
+    "repository": "https://github.com/hanxu66/hanxu-video-edit",
+    "release": "https://github.com/hanxu66/hanxu-video-edit/releases/tag/v0.3.3",
+    "archiveDownload": "https://github.com/hanxu66/hanxu-video-edit/releases/download/v0.3.3/hanxu-video-edit-0.3.3.zip",
+    "format": "whole project folder for local Codex; no global installation required"
+  }
+}

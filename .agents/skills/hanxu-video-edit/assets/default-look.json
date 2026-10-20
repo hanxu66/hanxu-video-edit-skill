@@ -1,0 +1,401 @@
+{
+  "id": "hanxu-default-look-v1",
+  "basis": {
+    "width": 1080,
+    "height": 1920,
+    "engine": "剪映专业版",
+    "field_sizes_are_not_pixels": true
+  },
+  "defaults": {
+    "speed": 1.1,
+    "audio_gain_db": 20.0,
+    "beauty_preset": "hanxu-default-face-v1",
+    "body_preset": "hanxu-default-body-v1",
+    "font": "三极宋黑体超粗",
+    "caption_size": 13,
+    "caption_color": "#FFFFFF",
+    "name_size": 10,
+    "name_color": "#FF7100",
+    "title_size": 7,
+    "title_color": "#FFFFFF",
+    "title_scale": 0.85,
+    "beauty_parameters": {
+      "亮眼": 0.1,
+      "祛法令纹": 0.25,
+      "磨皮": 0.35,
+      "祛黑眼圈": 0.5,
+      "丰盈": 0.05,
+      "美白": 0.19,
+      "匀肤": 0.1,
+      "白牙": 0.18,
+      "V脸": 0.1,
+      "瘦脸": 0.4,
+      "小脸": 0.15,
+      "窄脸": 0.15000000000000002,
+      "下颌骨": 0.22,
+      "颧骨": 0.22,
+      "大眼": 0.1,
+      "流畅脸": 0.05,
+      "下颌线": 0.1
+    },
+    "body_parameters": {
+      "瘦身": 0.2,
+      "小头": 0.1,
+      "瘦手臂": 0.1,
+      "直角肩": 0.1,
+      "磨皮": 0.11,
+      "美白": 0.19
+    },
+    "color_adjustments": {
+      "contrast": 5,
+      "saturation": 3,
+      "brightness": 0,
+      "exposure": 0,
+      "highlights": -5,
+      "shadows": 3,
+      "black": 0,
+      "vibrance": 0
+    },
+    "framing": {
+      "scale": 1.0,
+      "position_x": 0,
+      "position_y": 0
+    }
+  },
+  "beauty": {
+    "preset_id": "hanxu-default-face-v1",
+    "groups": {
+      "auto_beauty": [
+        {
+          "name": "亮眼",
+          "resource_id": "7407779333319724340",
+          "third_resource_id": "7210363411970921017",
+          "value": 0.1
+        },
+        {
+          "name": "祛法令纹",
+          "resource_id": "7408077446257331471",
+          "third_resource_id": "7127560078508429831",
+          "value": 0.25
+        },
+        {
+          "name": "磨皮",
+          "resource_id": "7408076339699322112",
+          "third_resource_id": "6976822940608238093",
+          "value": 0.35
+        },
+        {
+          "name": "祛黑眼圈",
+          "resource_id": "7408077132145937679",
+          "third_resource_id": "7127559798861599268",
+          "value": 0.5
+        },
+        {
+          "name": "丰盈",
+          "resource_id": "7408076532146605312",
+          "third_resource_id": "7165761391037518350",
+          "value": 0.05
+        },
+        {
+          "name": "美白",
+          "resource_id": "7408076966164778255",
+          "third_resource_id": "6998408303826965006",
+          "value": 0.19
+        },
+        {
+          "name": "匀肤",
+          "resource_id": "7408077497142693135",
+          "third_resource_id": "7106322605304451614",
+          "value": 0.1
+        },
+        {
+          "name": "白牙",
+          "resource_id": "7408077691880049960",
+          "third_resource_id": "6998408263892996639",
+          "value": 0.18
+        }
+      ],
+      "head_reshape": [
+        {
+          "name": "V脸",
+          "resource_id": "7406181003699440931",
+          "third_resource_id": "7358087335411454501",
+          "value": 0.1
+        },
+        {
+          "name": "瘦脸",
+          "resource_id": "7408078156944379136",
+          "third_resource_id": "7126765507457323557",
+          "value": 0.4
+        },
+        {
+          "name": "小脸",
+          "resource_id": "7406181120506678580",
+          "third_resource_id": "7325345220688613914",
+          "value": 0.15
+        },
+        {
+          "name": "窄脸",
+          "resource_id": "7406181367068806415",
+          "third_resource_id": "7358087267505672742",
+          "value": 0.15000000000000002
+        },
+        {
+          "name": "下颌骨",
+          "resource_id": "7408077346814627107",
+          "third_resource_id": "7126764917918536199",
+          "value": 0.22
+        },
+        {
+          "name": "颧骨",
+          "resource_id": "7408076852092357903",
+          "third_resource_id": "7127587811795931662",
+          "value": 0.22
+        },
+        {
+          "name": "大眼",
+          "resource_id": "7408077108586515746",
+          "third_resource_id": "6998408219898941982",
+          "value": 0.1
+        },
+        {
+          "name": "流畅脸",
+          "resource_id": "7408077026705280256",
+          "third_resource_id": "7165761469231927838",
+          "value": 0.05
+        },
+        {
+          "name": "下颌线",
+          "resource_id": "7493863675460160807",
+          "third_resource_id": "0",
+          "value": 0.1
+        }
+      ],
+      "makeup": []
+    },
+    "source_parameter_snapshot": true,
+    "runtime_verified_on_other_computers": false
+  },
+  "body": {
+    "preset_id": "hanxu-default-body-v1",
+    "groups": {
+      "body_reshapes": [
+        {
+          "name": "瘦身",
+          "resource_id": "7408076848183250216",
+          "third_resource_id": "6976812219048661540",
+          "value": 0.2
+        },
+        {
+          "name": "小头",
+          "resource_id": "7408076932065152296",
+          "third_resource_id": "6976812039847023111",
+          "value": 0.1
+        },
+        {
+          "name": "瘦手臂",
+          "resource_id": "7406181270591524148",
+          "third_resource_id": "7187394795965256247",
+          "value": 0.1
+        },
+        {
+          "name": "直角肩",
+          "resource_id": "7406017976282942754",
+          "third_resource_id": "7246635041663488567",
+          "value": 0.1
+        },
+        {
+          "name": "磨皮",
+          "resource_id": "7408077820116667700",
+          "third_resource_id": "7125729150572171812",
+          "value": 0.11
+        },
+        {
+          "name": "美白",
+          "resource_id": "7408028287785602319",
+          "third_resource_id": "7125780457576206879",
+          "value": 0.19
+        }
+      ]
+    },
+    "source_parameter_snapshot": true,
+    "runtime_verified_on_other_computers": false
+  },
+  "typography": {
+    "font_resource_id": "7312720224510284326",
+    "name_style": {
+      "alignment": 1,
+      "arrange_checked": true,
+      "border_color": "",
+      "border_item_checked": false,
+      "border_width": 0.0,
+      "bubbleResId": "",
+      "color": "#ff7100",
+      "curve_angle": 0.0,
+      "curve_checked": false,
+      "curve_enable": false,
+      "fill_color": "{\"render_type\":\"solid\",\"solid\":{\"alpha\":1.0,\"color\":[1.0,0.4431372582912445,0.0]}}",
+      "fixed_height": -1.0,
+      "fixed_width": -1.0,
+      "flowerResId": "",
+      "font_name": "三极宋黑体超粗",
+      "font_resource_id": "7312720224510284326",
+      "font_size": 10.0,
+      "frame_alpha": 0.0,
+      "frame_angle": 0.0,
+      "frame_color": "",
+      "frame_height": 0.0,
+      "frame_horizontal_offset": 0.0,
+      "frame_item_checked": false,
+      "frame_style": 0,
+      "frame_vertical_offset": 0.0,
+      "frame_width": 0.0,
+      "global_alpha": 1.0,
+      "has_bold_width": false,
+      "has_underline": false,
+      "italic_degree": 0,
+      "letter_spacing": 0.0,
+      "light_checked": false,
+      "light_color": "",
+      "light_hor_degree": 0.0,
+      "light_range": 0.0,
+      "light_res_id": "",
+      "light_strength": 0.0,
+      "light_style": 0,
+      "light_ver_degree": 0.0,
+      "line_spacing": 0.02,
+      "mix_checked": true,
+      "position_size_checked": true,
+      "rotation": 0.0,
+      "scale_x": 1.0,
+      "scale_y": 1.0,
+      "shadow_alpha": 0.0,
+      "shadow_angle": 0.0,
+      "shadow_checked": false,
+      "shadow_color": "",
+      "shadow_diffuse": 0.0,
+      "shadow_distance": 0.0,
+      "shadow_smoothing": 0.0,
+      "style_name": "",
+      "text_alpha": 1.0,
+      "transform_x": -0.6517241379310346,
+      "transform_y": -0.5384615384615385,
+      "type_setting": 0,
+      "uniform_scale_enabled": true,
+      "use_effect_default_color": false,
+      "use_shadow_diffuse": false
+    },
+    "title_style": {
+      "alignment": 0,
+      "arrange_checked": true,
+      "border_color": "",
+      "border_item_checked": false,
+      "border_width": 0.0,
+      "bubbleResId": "",
+      "color": "#ffffff",
+      "curve_angle": 0.0,
+      "curve_checked": false,
+      "curve_enable": false,
+      "fill_color": "{\"render_type\":\"solid\",\"solid\":{\"alpha\":1.0,\"color\":[1.0,1.0,1.0]}}",
+      "fixed_height": -1.0,
+      "fixed_width": -1.0,
+      "flowerResId": "",
+      "font_name": "三极宋黑体超粗",
+      "font_resource_id": "7312720224510284326",
+      "font_size": 7.0,
+      "frame_alpha": 0.0,
+      "frame_angle": 0.0,
+      "frame_color": "",
+      "frame_height": 0.0,
+      "frame_horizontal_offset": 0.0,
+      "frame_item_checked": false,
+      "frame_style": 0,
+      "frame_vertical_offset": 0.0,
+      "frame_width": 0.0,
+      "global_alpha": 1.0,
+      "has_bold_width": false,
+      "has_underline": false,
+      "italic_degree": 0,
+      "letter_spacing": 0.0,
+      "light_checked": false,
+      "light_color": "",
+      "light_hor_degree": 0.0,
+      "light_range": 0.0,
+      "light_res_id": "",
+      "light_strength": 0.0,
+      "light_style": 0,
+      "light_ver_degree": 0.0,
+      "line_spacing": 0.02,
+      "mix_checked": true,
+      "position_size_checked": true,
+      "rotation": 0.0,
+      "scale_x": 0.85,
+      "scale_y": 0.85,
+      "shadow_alpha": 0.0,
+      "shadow_angle": 0.0,
+      "shadow_checked": false,
+      "shadow_color": "",
+      "shadow_diffuse": 0.0,
+      "shadow_distance": 0.0,
+      "shadow_smoothing": 0.0,
+      "style_name": "",
+      "text_alpha": 1.0,
+      "transform_x": -0.3208332061767578,
+      "transform_y": -0.3229166567325592,
+      "type_setting": 0,
+      "uniform_scale_enabled": true,
+      "use_effect_default_color": false,
+      "use_shadow_diffuse": false
+    },
+    "source_saved_title_size": 8.0,
+    "title_size_precedence": "当前方法要求7，覆盖保存预设中的旧8；不恢复旧身份文字",
+    "name_reference": {
+      "size": 10,
+      "scale": 1.0,
+      "x": -704,
+      "y": -340,
+      "alignment": "left"
+    },
+    "title_reference": {
+      "size": 7,
+      "scale": 0.85,
+      "x": -400,
+      "y": -500,
+      "alignment": "left"
+    },
+    "caption": {
+      "size": 13,
+      "color": "#FFFFFF",
+      "shadow": "深色阴影",
+      "letter_spacing": 0,
+      "single_line": true,
+      "punctuation": false,
+      "placement": "人物正下方，实际人脸与平台安全区校准"
+    }
+  },
+  "color_policy": "所列5/3/-5/3来自原方法已确认同场景起点；不同光线按代表画面调整并回读，不直接宣称所有素材已校正。",
+  "cover": {
+    "font": "三极宋黑体超粗",
+    "first_line_color": "#FF7100",
+    "second_line_color": "#FFFFFF",
+    "shadow": "深色",
+    "line_spacing_engine_field": 10,
+    "letter_spacing": 0,
+    "title_lines": 2,
+    "width_per_line_fraction": 0.8
+  },
+  "export": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "container": "mp4",
+    "video_codec": "h264",
+    "color": "SDR Rec.709",
+    "video_bitrate_mbps": 10,
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_bitrate_kbps": 192
+  },
+  "resource_policy": "只携带样式和参数及平台资源标识；不包含作者姓名/title文字、照片、缩略图、音色、字体或美颜模型文件，不写入使用者全局预设。",
+  "scope": "仅新任务默认；当前已暂停视频与小样不回改"
+}
