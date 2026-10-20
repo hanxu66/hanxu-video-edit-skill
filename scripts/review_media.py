@@ -33,6 +33,7 @@ def main():
     p.add_argument('--word-timings',type=Path);p.add_argument('--font',type=Path);p.add_argument('--font-px',type=float,default=80);p.add_argument('--max-width',type=float,default=960)
     p.add_argument('--media',type=Path);p.add_argument('--ffprobe',type=Path);p.add_argument('--report',type=Path,required=True)
     a=p.parse_args();root=a.workspace.resolve(strict=True);out=a.report.resolve()
+    if root.is_relative_to(Path(__file__).resolve().parents[1]):raise ValueError('Choose a separate editing workspace, outside the installed skill')
     if not out.is_relative_to(root):raise ValueError('Report must stay inside the selected workspace')
     raw=json.loads(a.cards.read_text());cards=raw if isinstance(raw,list) else raw['cards']
     timing=json.loads(a.word_timings.read_text()) if a.word_timings else None

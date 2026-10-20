@@ -41,6 +41,8 @@ def native_valid(native,revision,roles):
 
 def build(spec,root,out):
     root=root.resolve(strict=True);out=within(out,root)
+    skill_root=Path(__file__).resolve().parents[1]
+    if (skill_root/'SKILL.md').is_file() and root.is_relative_to(skill_root):raise ValueError('Choose a separate editing workspace, outside the installed skill')
     if out.exists():raise ValueError('Never overwrite an existing delivery; choose a new revision directory')
     names=set();roles=set();assets=[]
     for a in spec['assets']:

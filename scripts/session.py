@@ -12,6 +12,7 @@ import platform
 import plistlib
 import shutil
 import sys
+sys.dont_write_bytecode = True
 import uuid
 
 MODES = ('talking-head', 'talking-head-ppt', 'talking-head-story', 'ai-only',
@@ -313,6 +314,9 @@ def main():
     root = args.workspace.expanduser().resolve(strict=True)
     if not root.is_dir():
         raise ValueError('workspace must be a directory')
+    skill_root = Path(__file__).resolve().parents[1]
+    if root.is_relative_to(skill_root):
+        raise ValueError('Choose a separate editing workspace; the installed skill directory is read-only')
     directory = inside(root / '.video-agent', root)
     path = inside(directory / 'session.json', root)
     if args.command == 'environment':

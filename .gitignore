@@ -2,13 +2,8 @@
 .video-agent/
 __pycache__/
 *.pyc
+.runtime-cache/
 *.mp4
 *.MP4
 *.mov
-*.MOV
 *.jypack
-输出/
-交付/
-试用记录/
-制作记录/
-.runtime-cache/

@@ -10,6 +10,7 @@ import venv
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--workspace',type=Path,required=True);p.add_argument('--install',action='store_true');a=p.parse_args();root=a.workspace.resolve(strict=True);runtime=(root/'.video-agent/runtime').resolve()
+    if root.is_relative_to(Path(__file__).resolve().parents[1]):raise ValueError('Choose a separate editing workspace, outside the installed skill')
     if not runtime.is_relative_to(root):raise ValueError('Runtime escapes workspace')
     target=runtime/'python';plan={'target':str(target),'packages':['Pillow>=10,<13'],'global_install':False,'installed':False}
     if a.install:

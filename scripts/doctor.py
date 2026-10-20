@@ -66,6 +66,7 @@ def observe_apps():
 
 def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=None,task_id=None,reserve_gb=0.5):
     root=Path(root).resolve(strict=True)
+    if root.is_relative_to(Path(__file__).resolve().parents[1]):raise ValueError('Choose a separate editing workspace, outside the installed skill')
     binaries={n:executable(n,x,root) for n,x in [('ffmpeg',ffmpeg),('ffprobe',ffprobe)]}
     checks={'python':{'status':'usable' if sys.version_info>=(3,9) else 'unsupported','path':sys.executable,'version':platform.python_version()},'pillow':{'status':'available' if importlib.util.find_spec('PIL') else 'missing','needed_for':'glyph width checks only; not intake or native editing'},'font':{'status':'not_checked','needed_for':'exact glyph rendering; no font files distributed'}}
     if font:

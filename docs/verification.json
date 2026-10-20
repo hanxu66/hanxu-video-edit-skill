@@ -1,0 +1,27 @@
+{
+  "version": "0.4.0",
+  "checked_at": "2026-10-20T22:08:41.358242+08:00",
+  "same_mac_separate_directories": true,
+  "original_project_required": false,
+  "project_agents_md_required": false,
+  "codex_native_skill_scanner_detected_in_workspaces": 2,
+  "discovery_scope": "repository-scoped registration to separate installation, fresh Codex process; user-global configuration untouched",
+  "scene_modes": [
+    "talking-head",
+    "talking-head-ppt",
+    "talking-head-story",
+    "ai-only",
+    "interview",
+    "user-interview",
+    "livestream-clip",
+    "livestream-card"
+  ],
+  "default_look_byte_identical_to_previous": true,
+  "workspaces_identity_state_isolated": true,
+  "installed_skill_tree_read_only": true,
+  "protected_source_copy_verified": true,
+  "delivery_build_relocation_rebuild_decode_verified": true,
+  "native_editor_test_rerun_for_this_structure_change": false,
+  "fresh_machine_full_edit_verified": false,
+  "scope": "Same Mac, separate installation and workspaces, synthetic media for script checks. Not a new-user/native-editor/phone/hearing validation."
+}
