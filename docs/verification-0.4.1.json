@@ -1,0 +1,39 @@
+{
+  "version": "0.4.1",
+  "checked_at": "2026-10-21T01:48:47.049701+08:00",
+  "change_scope": "Livestream visual calibration, safe-area execution checks and local revisions; documentation only",
+  "default_look_unchanged_from_0_4_0": true,
+  "all_existing_scripts_unchanged": true,
+  "scene_modes": [
+    "talking-head",
+    "talking-head-ppt",
+    "talking-head-story",
+    "ai-only",
+    "interview",
+    "user-interview",
+    "livestream-clip",
+    "livestream-card"
+  ],
+  "prior_local_livestream_evidence": {
+    "layout": "PPT above presenter",
+    "color_revised_clips": 2,
+    "user_accepted": true,
+    "same_revision_native_export_and_archive": true,
+    "audio_subtitles_cover_and_frame_boundaries_preserved": true,
+    "native_douyin_top_title_preview_checked": true,
+    "normal_speed_playback": "Continuous playback with representative visual observation; no claim of frame-by-frame human review",
+    "hearing": "听辨已跳过"
+  },
+  "this_update_checks": {
+    "skill_frontmatter": "passed",
+    "relative_links": "passed",
+    "public_file_boundary": "passed",
+    "source_file_hashes": "passed"
+  },
+  "rerun_full_edit_for_this_documentation_update": false,
+  "fresh_machine_full_edit_verified": false,
+  "real_phone_platform_safe_area_verified": false,
+  "cross_machine_native_restore_verified": false,
+  "custom_distribution_zip_updated": false,
+  "private_media_included": false
+}

@@ -1,9 +1,9 @@
 {
-  "version": "0.4.0",
+  "version": "0.4.1",
   "displayName": "韩叙视频剪辑 skill",
   "skillId": "hanxu-video-edit-skill",
   "format": "standalone skill; installed methods separate from editing workspaces",
-  "origin": "Preserved current editing methods and complete defaults; installation and workspace routing adapted only.",
+  "origin": "Existing complete editing methods/defaults retained; added locally verified livestream revision guidance and safe-area checkpoints.",
   "sourceContentHashes": {
     "references/口播剪辑.md": "648cfb87c890aa3d62031ec9ca5d110c7e38a9aa457e14be24665b491b43f3a1",
     "references/动画视频制作.md": "00bef6772057c43b494e9bd6a7a191ab883f666ea34d9210c88f39b3c857d40b",
@@ -21,35 +21,40 @@
   },
   "distribution": {
     "repository": "https://github.com/hanxu66/hanxu-video-edit-skill",
-    "release": "https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.4.0"
+    "release": "https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.4.1",
+    "update_scope": "GitHub source and instructions only; custom v0.4.0 zip retained unchanged"
   },
   "localFiles": {
-    "README.md": "903a0b8300cdb4d56a21794debffe1141fb9a880ff5aaa00d160ad46f28db1ed",
-    "SKILL.md": "85c2ed7af2653ea2c1226ef5bb82cf88d2342107515f192cb9a19bdf1633336e",
-    "VERSION.txt": "40b8eb4000a913a7791090535f291d3d369874162a89ef3c9e3d4e887a1b9e79",
+    ".gitignore": "4e95bf0d55b22a6083a453532101145acc62ea43a26a34a331961d562d455e88",
+    "README.md": "4209990079c116500b7befc277408a654c6419dd50c1b1318b45b0fe32d8d541",
+    "SKILL.md": "736638878125bc29d1baa0d1b55c29b1eda80fbfa2b74f7931759ee313d1d885",
+    "VERSION.txt": "f62184cee8787f2f6941c82041a5725d4edc9aa293ebe5dbf664406e82ec1fe1",
     "agents/openai.yaml": "360b974a0970020ee67af367828e22b77cab17b3f39f912c3fd89aeb2e71267f",
     "assets/default-look.json": "6ffa0451a848a9bed2524aba86de7a3e9a548ef96d7bac0ed085465758fa0e85",
+    "docs/verification-0.4.1.json": "85393393b4d56af1d0f4a5f0e4abb02b6e30b9325ddc9d539f3bc33689097d79",
     "docs/verification.json": "e21bb8643b1401be9df08fbd7baee50cfd9d5bb8ea69cfed8da00440f28caf1f",
-    "docs/验证范围.md": "d621ebb2207851f36d29ec070ab637fdd2ed0f450fd197dc5d9646e364bfb592",
+    "docs/更新说明.md": "727f64386df7ad2d07bc53d3bab908e205871df1e29faa6a1e007f1153adca7b",
+    "docs/验证范围.md": "689218e09f98df5b13b77f7496008e404abae8f77abd1c467a6090d0aca9eb66",
     "references/产品介绍视频.md": "f712f9aa5c11a2a29f1dedb426fe9c2384183e321023bf582e80f97954ea5f76",
-    "references/剪辑执行标准.md": "b235b3a8df1074da4147d2d20c81fef8e0e60d9489087fa0bd1c2bf54291b1a7",
+    "references/剪辑执行标准.md": "f7fdf1944f62a35daba69b3648eaeeab542c788f9ffb88f44f2027ee9a254117",
     "references/动画类型与分镜方法.md": "641027a0c01a35aac27e5cbb6588b5313afc1c0a319788a6f35d4f9cc507320a",
     "references/动画视频制作.md": "4092381399b509a3feb98f6fc213ab815b6cd9812b8d678751f7e82ba9e9b923",
     "references/口播剪辑.md": "48765850c818704088bd9ec482c3e1accedcd04ae1b4ed5c8f1366cfc2ce6e91",
-    "references/常见问题与局部返修.md": "14a28a7bb51fe7f277e9c7d9c1824b68de77bab5480ccaef6ddbe426e019a77b",
-    "references/最终工程交付.md": "11dde217e868b3495add2a6f32d29bb791b5cbf83ea91e0527153d981f520531",
+    "references/常见问题与局部返修.md": "26bebea2be5b466b9c37c1a5c5cacd1e350c97caa5e579187db61d946c700dfe",
+    "references/最终工程交付.md": "7a82d0e6fbf18ed4dce883c096f3cb75a15810c254260bca5a858497d1d74f5f",
     "references/环境与工具.md": "dbf0b4a34eb37340fa9a25ed2743dbc9474fc59923cc6133b185b155c4ea62aa",
     "references/用户配置与声音.md": "2faa38976b23ad5278a06f93e84dc566d22dd3dbd1f1b38e682311feb82e395e",
-    "references/直播切片剪辑.md": "c3095a085a43627d1006f0edc9390bfcda6e7d6a38b8e1af229aff91c9da03e0",
+    "references/直播切片剪辑.md": "e249caa5b44ee8ab06ad45f1fba7b15bf0743ef326f922b82b26103c9dfd21b0",
     "references/访谈剪辑.md": "04d3b715f21160e748bc428615b82918ed3bc8cbc318dfdf774ddf2567ecec7b",
     "references/路由与检查点.md": "7eee71b08d43cb72353493d87d210c5f52fbca100bc0074b7d8a7192776958e7",
     "references/首次上手与依赖.md": "1eb749edcc6af1690a3390dbae066868ca3a21d466e67b3f1034fec74582a142",
-    "references/默认效果与调整.md": "89a62d6397036e0e7fc555ceef0226779ae50a2078d73dc8d35e48de887c18e8",
+    "references/默认效果与调整.md": "8ccee96a17c199f6be86895dfecc5639367940048babc28846923b45e57c3675",
     "scripts/delivery.py": "27103fd4ffa6ca5052e13139ef73f36b19d5b8a4cd6cdcff618c0ba08b1acd07",
     "scripts/doctor.py": "6b2150d550530f1fde55ee76855f926fdee1503f6ffd35af25d902fa9b27e022",
     "scripts/inspect_video_editing_environment.py": "164f9462f0fb479867c9afa813a9fbec556a1c2f2caf28149ea7c1b530f2cd2b",
     "scripts/review_media.py": "ca76d7c9283254303d86e630554ffab46bf900a9dfd141944997f4578ea0a43e",
     "scripts/session.py": "b3bf8d5bb2abb6085d713edf48df1496ea333aaa6e198f5fdc9c39e6c56cf926",
     "scripts/setup_local_dependencies.py": "577a56853b939204f6915cfb14441be733e35a3f6dd738197717c1e7dd632fda"
-  }
+  },
+  "sourceContentHashesRole": "Historical method-import provenance; localFiles below identifies the current repository files."
 }

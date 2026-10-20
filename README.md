@@ -2,7 +2,9 @@
 
 把视频或稿件交给 Codex，通过对话完成剪辑。已有完整默认效果；看过实际小样后，可以说“美颜轻一点”“字幕大一点”“标题往下移”。
 
-当前版本：**0.4.0**。这是独立 skill，根目录的 `SKILL.md` 就是技能入口。安装一次后，在自己的本地剪辑工作目录中使用，无需把下载目录建成指定的 Codex 项目，也不用寻找隐藏文件。
+当前版本：**0.4.1**。这是独立 skill，根目录的 `SKILL.md` 就是技能入口。安装一次后，在自己的本地剪辑工作目录中使用，无需把下载目录建成指定的 Codex 项目，也不用寻找隐藏文件。
+
+本次补充直播切片实测中的修正：脸部泛白时按素材校准高光与明暗层次；小样和导出前检查平台安全区，顶部标题贴边也要调整；同时补齐长英文字幕、独立封面和同修订工程返修检查。完整能力和默认设置保留，具体变化见[更新说明](docs/更新说明.md)。
 
 ## 安装
 
@@ -10,11 +12,11 @@
 
 把下面这段话发给自己电脑上的 Codex：
 
-> 请使用 skill-installer，将 https://github.com/hanxu66/hanxu-video-edit-skill 仓库根目录（版本 v0.4.0）安装为我自己的技能，技能名为 hanxu-video-edit-skill。若已有旧版，先保留旧版再更新，不改其他技能。安装后检查入口和资源是否完整，告诉我如何开始。
+> 请使用 skill-installer，将 https://github.com/hanxu66/hanxu-video-edit-skill 仓库根目录（版本 v0.4.1）安装为我自己的技能，技能名为 hanxu-video-edit-skill。若已有旧版，先保留旧版再更新，不改其他技能。安装后检查入口和资源是否完整，告诉我如何开始。
 
-### 从压缩包安装
+### 已经拿到旧压缩包
 
-下载本页 [Release 压缩包](https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.4.0)，完整解压，找到里面含有 `SKILL.md` 的 `hanxu-video-edit-skill` 文件夹。把实际位置告诉 Codex：
+这次只更新 GitHub，原先另行分发的 0.4.0 压缩包保持原样；要用本次改进，请直接把上面的 GitHub 安装/更新指令发给 Codex。旧包仍可完整解压后安装，里面含有 `SKILL.md` 的 `hanxu-video-edit-skill` 文件夹就是技能；把实际位置告诉 Codex：
 
 > 请把这个位置的韩叙视频剪辑 skill 安装为我自己的技能：〈解压后的文件夹位置〉。若已有旧版，先保留旧版再更新。请检查安装结果，不要把素材或任务保存在技能安装目录。
 
@@ -49,8 +51,15 @@
 
 已核对项目见 [验证范围](docs/验证范围.md)。访谈特定风格及回放卡片既有版式等仍需对应样例核对；方法入口已保留，不将“有方法”写成所有场景已完成实剪验收。
 
+## 直播切片时会检查什么
+
+- 先看回放真实布局。上PPT下真人保留实际课件；若你要求选有截图、有画面的内容，会同时核对讲述期间的课件页面。
+- 默认效果后仍查脸部高光、肤色和明暗层次。你可以直接说“脸太白了，只调调色”，无需判断该改哪个参数；先看实际对照，再决定是否采用。
+- 顶部标题、字幕和封面分别检查目标平台安全区。靠近遮挡边界也会留出空隙，优先移动标题并避开脸部与课件；剪映预览和真实手机显示分别记录。
+- 字幕、封面或调色返修会同步到当前原生工程，检查其余有效效果保持。实际视频由你确认后交付，不自动发布。
+
 ## 遇到问题
 
 直接在原剪辑对话中给出时间点和修改要求。无法继续时，提供“当前步骤＋报错截图＋版本号”；无需先发原片、密码或整份私人日志。给你本技能的人也可以据此定位问题。
 
-[GitHub](https://github.com/hanxu66/hanxu-video-edit-skill) · [下载](https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.4.0) · [Codex 技能官方说明](https://learn.chatgpt.com/docs/build-skills)
+[GitHub](https://github.com/hanxu66/hanxu-video-edit-skill) · [v0.4.1 源码](https://github.com/hanxu66/hanxu-video-edit-skill/tree/v0.4.1) · [Codex 技能官方说明](https://learn.chatgpt.com/docs/build-skills)
