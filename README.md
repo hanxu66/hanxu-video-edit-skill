@@ -1,8 +1,8 @@
-# 韩叙视频剪辑 skill · 朋友试用版 0.3.4
+# 韩叙视频剪辑 skill · 朋友试用版 0.3.5
 
 把你自己的视频和要求交给电脑上的 Codex，通过对话完成剪辑和修改。ChatCut Desktop制作可编辑时间线，剪映专业版完成画面、美颜、字幕、封面和最终工程。当前先面向Mac朋友试用。
 
-**[下载最新版试用ZIP](https://github.com/hanxu66/hanxu-video-edit-skill/releases/download/v0.3.4/%E9%9F%A9%E5%8F%99%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91-skill-0.3.4.zip) · [版本与下载说明](https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.3.4) · [完整开始指南](开始使用.md)**
+**[下载最新版试用ZIP](https://github.com/hanxu66/hanxu-video-edit-skill/releases/download/v0.3.5/hanxu-video-edit-skill-0.3.5.zip) · [版本与下载说明](https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.3.5) · [完整开始指南](开始使用.md)**
 
 ## 第一次怎么开始
 
@@ -43,6 +43,6 @@
 
 ## 更新与许可状态
 
-0.3.4统一更名为“韩叙视频剪辑 skill”，同步文件夹、skill入口、仓库和下载入口；补入顶部标题安全区的实际预览与边距检查。剪辑默认效果和能力范围保持。收到更新时解压到新文件夹，保留旧任务，再让Codex读取旧任务继续；不要覆盖自己的素材与状态。
+0.3.5统一更名为“韩叙视频剪辑 skill”，同步文件夹、skill入口、仓库和下载入口；补入顶部标题安全区的实际预览与边距检查。剪辑默认效果和能力范围保持。收到更新时解压到新文件夹，保留旧任务，再让Codex读取旧任务继续；不要覆盖自己的素材与状态。
 
 本版本公开提供源码查看、下载及本次试用，尚未指定开放源代码许可证、再分发或转售条款；未额外授予第三方字体/模型/工具资源的分发许可。当前发布标记为朋友试用预发布版本。

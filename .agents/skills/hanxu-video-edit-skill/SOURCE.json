@@ -1,5 +1,5 @@
 {
-  "version": "0.3.4-friends",
+  "version": "0.3.5-friends",
   "builtAt": "2026-10-20T05:48:09.892110+00:00",
   "origin": "current self-use source files, not GitHub package",
   "sources": [
@@ -94,7 +94,7 @@
     "agents/openai.yaml": "360b974a0970020ee67af367828e22b77cab17b3f39f912c3fd89aeb2e71267f",
     "assets/default-look.json": "6ffa0451a848a9bed2524aba86de7a3e9a548ef96d7bac0ed085465758fa0e85",
     "assets/starter/AGENTS.md": "7eeaaec760f58b64928778aa5b83ffd1df58fbd46812d4aaa5b1ab2d141b6ea1",
-    "assets/starter/开始使用.md": "ff65676a440b62c70f6dad86ba484508f325fd558091958b159b396603f45d29",
+    "assets/starter/开始使用.md": "79e408b2b35de34366aef99824c917b0fbad6d03b54ce0501eadc683ef67066a",
     "references/产品介绍视频.md": "f712f9aa5c11a2a29f1dedb426fe9c2384183e321023bf582e80f97954ea5f76",
     "references/剪辑执行标准.md": "b235b3a8df1074da4147d2d20c81fef8e0e60d9489087fa0bd1c2bf54291b1a7",
     "references/动画类型与分镜方法.md": "641027a0c01a35aac27e5cbb6588b5313afc1c0a319788a6f35d4f9cc507320a",
@@ -140,8 +140,8 @@
   "releaseType": "friend-trial-prerelease",
   "distribution": {
     "repository": "https://github.com/hanxu66/hanxu-video-edit-skill",
-    "release": "https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.3.4",
-    "archiveDownload": "https://github.com/hanxu66/hanxu-video-edit-skill/releases/download/v0.3.4/%E9%9F%A9%E5%8F%99%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91-skill-0.3.4.zip",
+    "release": "https://github.com/hanxu66/hanxu-video-edit-skill/releases/tag/v0.3.5",
+    "archiveDownload": "https://github.com/hanxu66/hanxu-video-edit-skill/releases/download/v0.3.5/hanxu-video-edit-skill-0.3.5.zip",
     "format": "whole project folder for local Codex; no global installation required"
   },
   "displayName": "韩叙视频剪辑 skill",
