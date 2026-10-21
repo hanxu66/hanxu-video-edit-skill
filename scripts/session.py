@@ -24,7 +24,7 @@ SCENE_METHODS = {'interview': 'references/访谈剪辑.md',
                  'livestream-card': 'references/直播切片剪辑.md'}
 SETTINGS = dict(display_name=None, title_lines=None, show_identity=None,
                 visual_style='dark-orange', add_bgm=False, voice_source=None)
-LOOK = json.loads((Path(__file__).resolve().parents[1] / 'assets/default-look.json').read_text())
+LOOK = json.loads((Path(__file__).resolve().parents[1] / 'assets/default-look.json').read_text(encoding='utf-8-sig'))
 SETTINGS.update(LOOK['defaults'])
 TASK_KEYS = {'mode', 'source', 'script', 'brief', 'audio', 'script_approved',
              'animation_type', 'animation_scope', 'avatar_mode',
@@ -144,7 +144,7 @@ def validate(state, root):
         raw = task['deliverables'].get('delivery_manifest')
         if not raw:
             raise ValueError('Formal delivery requires a matching, verified native-project delivery manifest; use review scope for a preview')
-        manifest = json.loads(inside(Path(raw), root).read_text())
+        manifest = json.loads(inside(Path(raw), root).read_text(encoding='utf-8-sig'))
         if manifest.get('revision') != task['revision'] or manifest.get('delivery_level') != 'native_complete':
             raise ValueError('Native final project is missing, stale or not verified')
         from delivery import verify
@@ -279,25 +279,11 @@ def protect_source(state, root, reserve_gb):
 
 
 def environment(root):
-    apps = {}
-    candidates = {'ChatCut': ('ChatCut.app',),
-                  '剪映': ('剪映专业版.app', 'JianyingPro.app', 'VideoFusion-macOS.app'),
-                  'CapCut': ('CapCut.app',)}
-    for name, dirs in candidates.items():
-        found = []
-        for base in (Path('/Applications'), Path.home() / 'Applications'):
-            for leaf in dirs:
-                app = base / leaf
-                if app.exists():
-                    item = {'path': str(app), 'version': None}
-                    try:
-                        with open(app / 'Contents/Info.plist', 'rb') as handle:
-                            item['version'] = plistlib.load(handle).get('CFBundleShortVersionString')
-                    except (OSError, plistlib.InvalidFileException):
-                        pass
-                    found.append(item)
-        apps[name] = found
+    from platform_support import observe_apps, host_info
+    observed = observe_apps()
+    apps = {('剪映' if label == 'Jianying' else label): rows for label, rows in observed['installed'].items()}
     return {'observed_at': now(), 'platform': platform.system(), 'applications_found': apps,
+            'host': host_info(),
             'workspace_free_bytes': shutil.disk_usage(root).free,
             'control_and_connection': 'not_tested', 'subscriptions': 'unknown',
             'scope': 'read-only; app existence does not prove tool/project access'}
@@ -324,7 +310,7 @@ def main():
         result = environment(root)
         result['dependency_report'] = assess(root, 'content')
         print(json.dumps(result, ensure_ascii=False, indent=2)); return
-    state = json.loads(path.read_text()) if path.exists() else {'schema_version': 1, 'profile': {}, 'task': None}
+    state = json.loads(path.read_text(encoding='utf-8-sig')) if path.exists() else {'schema_version': 1, 'profile': {}, 'task': None}
     validate(state, root)
     mutation = args.command in ('init', 'new', 'update', 'protect-source')
     protection_result = protect_source(state, root, args.reserve_gb) if args.command == 'protect-source' else None
@@ -334,12 +320,12 @@ def main():
         if state['task']:
             archive = inside(directory / 'history' / (state['task']['id'] + '.json'), root)
             archive.parent.mkdir(parents=True, exist_ok=True)
-            archive.write_text(json.dumps(state['task'], ensure_ascii=False, indent=2))
+            archive.write_text(json.dumps(state['task'], ensure_ascii=False, indent=2), encoding='utf-8')
         state['task'] = fresh_task(state['profile'])
     if args.command == 'update':
         if not args.scope or not args.data_file:
             raise ValueError('update requires scope and project-local JSON patch')
-        patch = json.loads(inside(args.data_file, root).read_text())
+        patch = json.loads(inside(args.data_file, root).read_text(encoding='utf-8-sig'))
         if not isinstance(patch, dict):
             raise ValueError('patch must be an object')
         if args.scope == 'profile':
@@ -386,11 +372,16 @@ def main():
         directory.mkdir(exist_ok=True)
         state['updated_at'] = now()
         temp = inside(directory / 'session.tmp', root)
-        temp.write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n')
+        temp.write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         os.replace(temp, path)
     output = plan(state, root) if args.command == 'plan' else protection_result if protection_result else state
     print(json.dumps(output, ensure_ascii=False, indent=2))
 
+
+# Keep Unicode paths/JSON readable in Windows terminals and redirected output.
+for _stream in (sys.stdout, sys.stderr):
+    if __name__ == "__main__" and hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 if __name__ == '__main__':
     try:

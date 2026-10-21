@@ -5,9 +5,13 @@ Python standard library only. No app control, cleanup, authentication or media
 access. A returned process PID does not establish that its window responds.
 """
 import argparse
+import sys
+import csv
+import io
 import json
 import math
 import platform
+import re
 import shutil
 import subprocess
 from datetime import datetime, timezone
@@ -43,7 +47,7 @@ def capacity(paths, min_free_gib, reserve_gib):
 
 def observation(argv):
     try:
-        result = subprocess.run(argv, capture_output=True, text=True,
+        result = subprocess.run(argv, capture_output=True, text=True,encoding='utf-8',errors='replace',
                                 timeout=5, check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
         return {"status": "unavailable", "reason": type(exc).__name__}
@@ -53,6 +57,16 @@ def observation(argv):
 
 
 def app_observation():
+    if platform.system() == 'Windows':
+        result = observation(['tasklist','/FO','CSV','/NH'])
+        if result['status'] != 'observed': return result
+        apps=[]
+        for row in csv.reader(io.StringIO(result['value'])):
+            if len(row)<5 or row[0].lower() not in {'jianyingpro.exe','capcut.exe','chatcut.exe'}: continue
+            try:
+                apps.append({'pid':int(row[1]),'rssKiB':int(re.sub(r'\D','',row[4])),'name':row[0]})
+            except ValueError: continue
+        return {'status':'observed','apps':apps,'windowResponsiveness':'not_tested'}
     result = observation(["ps", "-axo", "pid=,rss=,comm="])
     if result["status"] != "observed":
         return result
@@ -99,6 +113,11 @@ def main():
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if sufficient else 2
 
+
+# Keep Unicode paths/JSON readable in Windows terminals and redirected output.
+for _stream in (sys.stdout, sys.stderr):
+    if __name__ == "__main__" and hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 if __name__ == "__main__":
     raise SystemExit(main())

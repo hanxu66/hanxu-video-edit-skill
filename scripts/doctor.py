@@ -11,6 +11,7 @@ import plistlib
 import shutil
 import subprocess
 import sys
+from platform_support import binary_candidates, font_candidates, host_info, observe_apps
 
 GIB=1024**3
 CAPABILITIES={
@@ -29,40 +30,17 @@ def local_path(raw,root):
 
 def run(argv):
     try:
-        p=subprocess.run(argv,capture_output=True,text=True,timeout=8,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1'))
+        p=subprocess.run(argv,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=8,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',PYTHONUTF8='1'))
         return p.returncode,(p.stdout or p.stderr).strip()[:1800]
     except (OSError,subprocess.TimeoutExpired) as e:return -1,type(e).__name__
 
 def executable(name,explicit,root):
-    candidates=[]
-    if explicit:candidates=[Path(explicit).expanduser()]
-    else:
-        candidates=[root/'.video-agent/runtime/bin'/name]
-        if shutil.which(name):candidates.append(Path(shutil.which(name)))
-        if platform.system()=='Darwin':
-            for base in [Path('/Applications'),Path.home()/'Applications']:
-                candidates.append(base/'ChatCut.app/Contents/Resources/app.asar.unpacked/node_modules/ffmpeg-ffprobe-static'/name)
+    candidates=binary_candidates(name,root,explicit)
     for p in candidates:
         if p.is_file() and os.access(p,os.X_OK):
             code,msg=run([str(p),'-version'])
             if code==0:return dict(status='usable',path=str(p.resolve()),version_line=msg.splitlines()[0])
     return dict(status='missing_or_unusable',path=None)
-
-def observe_apps():
-    found={}
-    if platform.system()=='Darwin':
-        for label,names in {'ChatCut':['ChatCut.app'],'Jianying':['VideoFusion-macOS.app','JianyingPro.app','剪映专业版.app'],'CapCut':['CapCut.app']}.items():
-            found[label]=[]
-            for base in [Path('/Applications'),Path.home()/'Applications']:
-                for name in names:
-                    p=base/name
-                    if p.is_dir():
-                        version=None
-                        try:
-                            with (p/'Contents/Info.plist').open('rb') as f:version=plistlib.load(f).get('CFBundleShortVersionString')
-                        except (OSError,ValueError):pass
-                        found[label].append(dict(path=str(p),version=version))
-    return dict(status='observed' if found else 'not_checked_on_this_platform',installed=found,connection='not_checked')
 
 def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=None,task_id=None,reserve_gb=0.5):
     root=Path(root).resolve(strict=True)
@@ -72,10 +50,8 @@ def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=Non
     if font:
         p=Path(font).expanduser()
         checks['font']={'status':'file_readable' if p.is_file() and os.access(p,os.R_OK) else 'missing','path':str(p),'native_app_render':'not_checked'}
-    elif platform.system()=='Darwin':
-        fonts=[]
-        for base in [Path.home()/'Library/Fonts',Path('/Library/Fonts')]:
-            if base.is_dir():fonts.extend(str(p) for p in base.iterdir() if p.suffix.lower() in ('.ttf','.otf') and '三极宋黑体' in p.name)
+    elif platform.system() in ('Darwin','Windows'):
+        fonts=font_candidates()
         checks['font']={'status':'file_found' if fonts else 'not_found_locally','paths':fonts,'native_app_render':'not_checked'}
     media={'status':'not_provided'};source_bytes=0;source_outside=False
     if source:
@@ -91,7 +67,7 @@ def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=Non
             else:media['probe_status']='failed'
     observations={}
     if receipt:
-        data=json.loads(local_path(receipt,root).read_text())
+        data=json.loads(local_path(receipt,root).read_text(encoding='utf-8-sig'))
         if not task_id or data.get('task_id')!=task_id:raise ValueError('Capability receipt must match an explicit task id')
         for row in data.get('observations',[]):
             if row.get('status') not in ('passed','failed','not_checked'):raise ValueError('Invalid capability status')
@@ -103,6 +79,8 @@ def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=Non
     budget=int(reserve_gb*GIB)+(source_bytes if source_outside else 0)
     free=shutil.disk_usage(root).free
     blockers=[]
+    if host_info()['wsl'] and stage in ('readiness','preview','look','delivery'):
+        blockers.append('native_windows_runtime_required_for_windows_desktop')
     if checks['python']['status']!='usable':blockers.append('python_3_9_required')
     if media['status']=='missing':blockers.append('source_missing_keep_progress')
     if media.get('probe_status')=='failed':blockers.append('media_probe_failed')
@@ -114,7 +92,7 @@ def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=Non
     if unproven:actions.append({'owner':'agent','action':'Discover actual host tools and read the intended test project, then record evidence; app installation alone is not connection.'})
     if any(x['status']!='usable' for x in binaries.values()):actions.append({'owner':'agent','action':'Locate host-bundled runtime or accept an explicit binary path before asking the user to install anything; do not use a developer-only path.'})
     if checks['pillow']['status']=='missing':actions.append({'owner':'agent','action':'Only if glyph measurement is needed, prepare project-local dependencies; native editing can continue.'})
-    return {'schema_version':1,'observed_at':datetime.now(timezone.utc).isoformat(),'workspace':str(root),'stage':stage,'platform':platform.system(),'python_checks':checks,'binaries':binaries,'applications':observe_apps(),'source':media,'capacity':{'free_bytes':free,'required_bytes':floor+budget,'sufficient':free>=floor+budget},'capabilities':observations,'blocking_checks':blockers,'stage_status':'ready_for_checked_stage' if not blockers else 'needs_checks_or_action','can_continue_intake':True,'next_actions':actions,'scope':'read-only observations, no install/login/global changes; no proof of media quality or fresh-user success'}
+    return {'schema_version':1,'observed_at':datetime.now(timezone.utc).isoformat(),'workspace':str(root),'stage':stage,'platform':platform.system(),'host':host_info(),'python_checks':checks,'binaries':binaries,'applications':observe_apps(),'source':media,'capacity':{'free_bytes':free,'required_bytes':floor+budget,'sufficient':free>=floor+budget},'capabilities':observations,'blocking_checks':blockers,'stage_status':'ready_for_checked_stage' if not blockers else 'needs_checks_or_action','can_continue_intake':True,'next_actions':actions,'scope':'read-only observations, no install/login/global changes; no proof of media quality or fresh-user success'}
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--workspace',type=Path,required=True);p.add_argument('--stage',choices=tuple(CAPABILITIES),default='content');p.add_argument('--source');p.add_argument('--ffmpeg');p.add_argument('--ffprobe');p.add_argument('--font');p.add_argument('--capabilities-file');p.add_argument('--task-id');p.add_argument('--reserve-gb',type=float,default=.5);p.add_argument('--report',type=Path)
@@ -122,8 +100,13 @@ def main():
     if not 0<=a.reserve_gb<100000:raise ValueError('Invalid reserve')
     root=a.workspace.resolve(strict=True);report=assess(root,a.stage,a.source,a.ffmpeg,a.ffprobe,a.font,a.capabilities_file,a.task_id,a.reserve_gb)
     if a.report:
-        out=local_path(a.report,root);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+        out=local_path(a.report,root);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n', encoding='utf-8')
     print(json.dumps(report,ensure_ascii=False,indent=2))
+
+# Keep Unicode paths/JSON readable in Windows terminals and redirected output.
+for _stream in (sys.stdout, sys.stderr):
+    if __name__ == "__main__" and hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 if __name__=='__main__':
     try:main()

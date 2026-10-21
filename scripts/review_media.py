@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Read-only caption/file checks. Reports risks; never edits source or guesses speech."""
 import argparse
+import sys
 import json
 from pathlib import Path
 import re
@@ -35,8 +36,8 @@ def main():
     a=p.parse_args();root=a.workspace.resolve(strict=True);out=a.report.resolve()
     if root.is_relative_to(Path(__file__).resolve().parents[1]):raise ValueError('Choose a separate editing workspace, outside the installed skill')
     if not out.is_relative_to(root):raise ValueError('Report must stay inside the selected workspace')
-    raw=json.loads(a.cards.read_text());cards=raw if isinstance(raw,list) else raw['cards']
-    timing=json.loads(a.word_timings.read_text()) if a.word_timings else None
+    raw=json.loads(a.cards.read_text(encoding='utf-8-sig'));cards=raw if isinstance(raw,list) else raw['cards']
+    timing=json.loads(a.word_timings.read_text(encoding='utf-8-sig')) if a.word_timings else None
     measure=None
     if a.font:
         from PIL import ImageFont
@@ -49,7 +50,12 @@ def main():
         result['file']={'major_brand':brand,'duration':data['format'].get('duration'),'streams':[{'type':s['codec_type'],'codec':s.get('codec_name'),'width':s.get('width'),'height':s.get('height'),'frame_rate':s.get('avg_frame_rate'),'sample_rate':s.get('sample_rate')} for s in data['streams']]}
         if brand.strip()=='qt':result['issues'].append(dict(kind='mov_container_instead_of_mp4',action='preserve_native_and_stream_copy_then_verify'))
     result['objective_status']='failed' if result['issues'] else 'passed'
-    out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n');print(json.dumps(result,ensure_ascii=False))
+    out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n', encoding='utf-8');print(json.dumps(result,ensure_ascii=False))
 
+
+# Keep Unicode paths/JSON readable in Windows terminals and redirected output.
+for _stream in (sys.stdout, sys.stderr):
+    if __name__ == "__main__" and hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 if __name__=='__main__':main()

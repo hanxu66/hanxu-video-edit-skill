@@ -11,7 +11,9 @@ description: 使用韩叙剪辑方法，通过对话制作口播、访谈（含�
 
 首次使用或环境不明时，按[首次上手与依赖](references/首次上手与依赖.md)接收材料并分阶段检查。本技能独立加载，不要求工作目录含有AGENTS.md或本技能副本；应用/插件连接和账号授权按实际检查。
 
-先确定两个位置：`SKILL_ROOT`为当前被加载的SKILL.md所在目录，`WORKSPACE`为使用者当前的剪辑工作目录。方法、默认配置和脚本从SKILL_ROOT只读加载；素材工作副本、进度、临时文件、依赖环境和输出只写WORKSPACE。所有`scripts/...`、`references/...`、`assets/...`均相对SKILL_ROOT解析，调用脚本必须用绝对路径，例如`python3 -B "<SKILL_ROOT>/scripts/session.py" --workspace "<WORKSPACE>" init`；不能从工作目录猜脚本位置，也不能把安装目录当工作目录。
+同一技能支持macOS与原生Windows。首次先识别当前执行端系统；Windows读取[双系统使用](references/双系统使用.md)，使用本机Windows Python与PowerShell，不套Mac路径、快捷键或Apple专用编码器。若实际处于WSL而剪辑软件在Windows，先辨明两端路径和控制能力；未通过交接小样前不宣称可完整交付。
+
+先确定两个位置：`SKILL_ROOT`为当前被加载的SKILL.md所在目录，`WORKSPACE`为使用者当前的剪辑工作目录。方法、默认配置和脚本从SKILL_ROOT只读加载；素材工作副本、进度、临时文件、依赖环境和输出只写WORKSPACE。所有`scripts/...`、`references/...`、`assets/...`均相对SKILL_ROOT解析，调用脚本必须用绝对路径和已核验的Python解释器；Mac可用`python3 -X utf8 -B "<SKILL_ROOT>/scripts/session.py" --workspace "<WORKSPACE>" init`，Windows按双系统使用中的PowerShell调用形式。不能从工作目录猜脚本位置，也不能把安装目录当工作目录。
 
 已有使用者指定的工作目录就采用。没有目录而当前宿主提供可写本地工作区时，直接在其中建立本条剪辑目录并告知实际位置；没有可写本地工作区才合并询问保存位置。接收已给素材和需求先行，不要求用户复制技能文件、创建特定名称的Codex项目或手写规则文件。
 

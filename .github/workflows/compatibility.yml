@@ -1,0 +1,45 @@
+name: Mac and Windows compatibility
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compatibility:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+        python: ['3.9', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      TEST_WORKSPACE: ${{ runner.temp }}/hanxu-video-compatibility
+      REQUIRE_MEDIA_TEST: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Ensure FFmpeg on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
+            choco install ffmpeg --yes --no-progress
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          $env:Path += ';C:\ProgramData\chocolatey\bin'
+          ffmpeg -version
+          ffprobe -version
+      - name: Ensure FFmpeg on Mac
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          command -v ffmpeg || brew install ffmpeg
+          ffmpeg -version
+          ffprobe -version
+      - name: Test native filesystem, Unicode, intake and media rebuild
+        run: python -B -m unittest discover -s tests -v

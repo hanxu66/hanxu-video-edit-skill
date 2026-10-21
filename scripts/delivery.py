@@ -26,6 +26,7 @@ def within(p,root):
 def relative(raw):
     p=PurePosixPath(raw)
     if p.is_absolute() or '..' in p.parts or not p.parts or not re.fullmatch(r'[A-Za-z0-9_./-]+',raw):raise ValueError('Use a safe relative ASCII bundle filename')
+    if any(part.endswith('.') or part.split('.')[0].upper() in {'CON','PRN','AUX','NUL',*[f'COM{i}' for i in range(1,10)],*[f'LPT{i}' for i in range(1,10)]} for part in p.parts):raise ValueError('Bundle filename is reserved on Windows')
     return p
 
 def copy_file(source,target):
@@ -48,8 +49,8 @@ def build(spec,root,out):
     for a in spec['assets']:
         name=str(relative(a['name']));source=Path(a['path']).expanduser()
         if source.is_symlink() or not source.is_file():raise ValueError('Asset must be a real file: '+a['role'])
-        if name in names or a['role'] in roles:raise ValueError('Duplicate filename or role')
-        names.add(name);roles.add(a['role']);assets.append((a,source))
+        if name.casefold() in names or a['role'] in roles:raise ValueError('Duplicate filename or role (case-insensitive)')
+        names.add(name.casefold());roles.add(a['role']);assets.append((a,source))
     if not {'video','cover','subtitles','caption_source','cover_source','render_master','source_map'}<=roles:raise ValueError('Missing a required current-revision deliverable or editable source')
     budget=sum(p.stat().st_size for _,p in assets)+1024**3
     if shutil.disk_usage(root).free<budget:raise ValueError('Insufficient space for self-contained delivery and reserve')
@@ -64,12 +65,12 @@ def build(spec,root,out):
     # A folder or an old draft is not evidence of a matching final native project.
     native_ok=native_valid(native,spec['revision'],roles)
     result={'schema_version':1,'revision':spec['revision'],'created_at':datetime.now(timezone.utc).isoformat(),'delivery_level':'native_complete' if native_ok else 'review_bundle_native_pending','native':native,'assets':entries,'render':spec['render'],'hearing':spec.get('hearing','not_verified'),'limitations':spec.get('limitations',[]),'source_policy':'All listed paths relative to this bundle; software and resource requirements documented separately. Native app archives may retain their own managed caches.'}
-    (out/'project.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+    (out/'project.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n', encoding='utf-8')
     copy_file(Path(__file__).resolve(),out/'delivery.py')
     return verify(out)
 
 def verify(folder):
-    folder=Path(folder).resolve(strict=True);p=json.loads((folder/'project.json').read_text());errors=[]
+    folder=Path(folder).resolve(strict=True);p=json.loads((folder/'project.json').read_text(encoding='utf-8-sig'));errors=[]
     if p.get('delivery_level')=='native_complete' and not native_valid(p.get('native',{}),p['revision'],{a['role'] for a in p['assets']}):errors.append('native_final_evidence_missing_or_stale')
     for a in p['assets']:
         target=within(folder/str(relative(a['path'])),folder)
@@ -78,19 +79,24 @@ def verify(folder):
     return {'revision':p['revision'],'delivery_level':p['delivery_level'],'assets_verified':len(p['assets'])-len(errors),'errors':errors,'status':'passed' if not errors else 'failed','native_final_verified':p['delivery_level']=='native_complete'}
 
 def rebuild(folder,ffmpeg,font_file,output,encoder,captions_ass=None):
+    if encoder=='h264_videotoolbox' and platform.system()!='Darwin':raise ValueError('h264_videotoolbox is Mac-only; use libx264 on Windows')
     folder=Path(folder).resolve(strict=True);out=within(output,folder)
     if out.exists():raise ValueError('Do not overwrite delivered or rebuilt media')
     check=verify(folder)
     if check['errors']:raise ValueError('Restore or intentionally revise changed assets before rebuild')
-    project=json.loads((folder/'project.json').read_text());assets={a['role']:a['path'] for a in project['assets']};config=project['render'];font=Path(font_file).expanduser().resolve(strict=True)
+    project=json.loads((folder/'project.json').read_text(encoding='utf-8-sig'));assets={a['role']:a['path'] for a in project['assets']};config=project['render'];font=Path(font_file).expanduser().resolve(strict=True)
     captions=str(relative(assets['caption_source']))
     if captions_ass is not None:
         edited=within(captions_ass,folder)
         if not edited.is_file():raise ValueError('Edited captions missing')
         captions=str(relative(edited.relative_to(folder).as_posix()))
-    # Filter filenames inside the bundle are controlled; only the external font directory needs quoting.
-    fontdir=font.parent.as_posix().replace(':','\\:').replace("'", "'\\''")
-    x,y,w,h=config['caption_clear_region'];vf=f"drawbox=x={x}:y={y}:w={w}:h={h}:color=black:t=fill,ass={captions}:fontsdir='{fontdir}'"
+    # Stage only the caller-selected licensed font inside the bundle cache.
+    # Relative ASCII filter paths avoid Windows drive-colon/backslash and
+    # apostrophe escaping in libavfilter; subprocess arguments stay separate.
+    fontdir=folder/'.runtime-cache/fonts'/digest(font)[:16];fontdir.mkdir(parents=True,exist_ok=True)
+    staged=fontdir/('selected'+font.suffix.lower())
+    if not staged.exists() or digest(staged)!=digest(font): copy_file(font,staged)
+    x,y,w,h=config['caption_clear_region'];vf=f"drawbox=x={x}:y={y}:w={w}:h={h}:color=black:t=fill,ass={captions}:fontsdir={fontdir.relative_to(folder).as_posix()}"
     args=[str(Path(ffmpeg).resolve()),'-hide_banner','-i',assets['render_master'],'-vf',vf,'-map','0:v:0','-map','0:a:0','-c:v',encoder,'-b:v',str(config['bitrate']),'-pix_fmt','yuv420p','-r',str(config['fps']),'-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709','-c:a','copy','-movflags','+faststart','-f','mp4',str(out)]
     out.parent.mkdir(parents=True,exist_ok=True)
     cache=folder/'.runtime-cache';temp=cache/'tmp';temp.mkdir(parents=True,exist_ok=True)
@@ -106,11 +112,16 @@ def main():
     v=sub.add_parser('verify');v.add_argument('--bundle',type=Path,required=True)
     r=sub.add_parser('rebuild');r.add_argument('--bundle',type=Path,required=True);r.add_argument('--ffmpeg',required=True);r.add_argument('--font-file',required=True);r.add_argument('--captions-ass',type=Path);r.add_argument('--output',type=Path,required=True);r.add_argument('--encoder',choices=['libx264','h264_videotoolbox'],default='libx264')
     a=p.parse_args()
-    if a.command=='build':result=build(json.loads(within(a.spec,a.workspace.resolve()).read_text()),a.workspace,a.destination)
+    if a.command=='build':result=build(json.loads(within(a.spec,a.workspace.resolve()).read_text(encoding='utf-8-sig')),a.workspace,a.destination)
     elif a.command=='verify':result=verify(a.bundle)
     else:result=rebuild(a.bundle,a.ffmpeg,a.font_file,a.output,a.encoder,a.captions_ass)
     print(json.dumps(result,ensure_ascii=False,indent=2))
     if result.get('errors'):raise SystemExit(2)
+
+# Keep Unicode paths/JSON readable in Windows terminals and redirected output.
+for _stream in (sys.stdout, sys.stderr):
+    if __name__ == "__main__" and hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 if __name__=='__main__':
     try:main()
