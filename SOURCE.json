@@ -34,7 +34,7 @@
     "assets/default-look.json": "6ffa0451a848a9bed2524aba86de7a3e9a548ef96d7bac0ed085465758fa0e85",
     "docs/verification-0.4.1.json": "85393393b4d56af1d0f4a5f0e4abb02b6e30b9325ddc9d539f3bc33689097d79",
     "docs/verification-0.5.0.json": "4fa6c6edbaacb031ccbbf1ffc499c461a9d1c4587868eb501eacd88bbb733596",
-    "docs/verification-0.6.0.json": "6c75f6898499984b27010a58b73045f09fcb6002e7725008b8facd8673637871",
+    "docs/verification-0.6.0.json": "cb71b71b6eda1a1b1416c11a27abacca77ef254d21a72bdb6529ca6608b4422c",
     "docs/verification.json": "e21bb8643b1401be9df08fbd7baee50cfd9d5bb8ea69cfed8da00440f28caf1f",
     "docs/更新说明.md": "c877892e346ebdfed998f887d3a5c9e175d0a4dd7550bc625c4a981fe1454ead",
     "docs/验证范围.md": "9da4bbd882b2c7a83f68eb132c10089829232ee0206e509ead2608935c4bed91",
@@ -56,7 +56,7 @@
     "references/首次上手与依赖.md": "6e1feb9d6232062be750d82fa3c02436c176108b25a4f6b0de0daa4fd032eae9",
     "references/默认效果与调整.md": "8ccee96a17c199f6be86895dfecc5639367940048babc28846923b45e57c3675",
     "scripts/check_media_integrity.py": "c284a7ef462fc769eeabef95e20a603f26abe9ff25ec02be63a698a46e26c109",
-    "scripts/check_subtitle_render.py": "f48de9dbd080b5211a0f245ee8261934de9cf45f837ce2cae2b5e47d64aac6af",
+    "scripts/check_subtitle_render.py": "cf05a720eb4f5d614ed753f392c21c4f8a93fc7b3143271c391588a1b49068c3",
     "scripts/check_subtitle_width.py": "8f38353506071441c7c26fd8310a80b5d6206a9fa88e5d96ee9f456060f36a9f",
     "scripts/check_video_export.py": "2349597a05012fba732f483e5bd690d71c5bcac51f1c670a8558cef8b248edba",
     "scripts/delivery.py": "4bf55bfcc4f44d5e65edc37e29acce4a32b39c7b140e23e58310375c47162573",
@@ -68,9 +68,9 @@
     "scripts/session.py": "82ccadc37a6e03c5f7b64d7cb4dee6ee1947e1cd9b693881d512acbe7ea9391a",
     "scripts/setup_local_dependencies.py": "32ec8c5bf3b469d1ae41a730462a4d23b83700ee6226f2ebf9b0831e467aff70",
     "tests/test_compatibility.py": "07b338dcbb6b4d786c365459c590530d507b9b4813839bf402257afa600da1c9",
-    "tests/test_feedback_regressions.py": "73a018d40128b71c6ea6027d4482abf6c0c805edc159ca45437d4830a9ca7825",
+    "tests/test_feedback_regressions.py": "6454cc38092b062a3be537387264e7479eca059a60ebd1799d33c27e011e05b3",
     "tests/test_subtitle_width.py": "aa79a996802b3a93a059564bedffadac201c292b398646f13a790f457696559b",
-    "tests/test_video_editing_qa.py": "876f42c216980ad48d7b8ec2ba597f4305b9a7dc61389090c2ff08f8d673c9b7"
+    "tests/test_video_editing_qa.py": "c532ae779704b0b8697abe0050ca55c5a7a269a9ed1ad8b8b71ec4942d655ef0"
   },
   "sourceContentHashesRole": "Historical method-import provenance; localFiles below identifies the current repository files.",
   "reusableToolImports": {

@@ -136,7 +136,7 @@ class Feedback(unittest.TestCase):
         p=self.media('坏片.mp4');p.write_bytes(p.read_bytes()[:200])
         report=self.work/'坏片检查.json'
         r=self.cli('check_media_integrity.py','--media',p,'--report',report,'--ffmpeg',self.ff,'--ffprobe',self.fp)
-        self.assertEqual(r.returncode,2);self.assertEqual(json.loads(report.read_text())['status'],'failed')
+        self.assertEqual(r.returncode,2);self.assertEqual(json.loads(report.read_text(encoding='utf-8'))['status'],'failed')
 
     def test_content_plan_stops_at_missing_failed_or_stale_source_report(self):
         state=self.state();source=self.work/'source.mp4';source.write_bytes(b'synthetic corrupt input')
@@ -176,6 +176,16 @@ class Feedback(unittest.TestCase):
         task['deliverables']['media_integrity']=str(self.write('integrity.json',inspect_media(current,self.ff,self.fp)))
         init(task,'r1',{key:{'required':False,'reason':'Synthetic gate unit fixture only'} for key in CHECKS})
         with self.assertRaisesRegex(ValueError,'video differs'):session.validate(state,self.work)
+
+    def test_actual_caption_frame_extraction_uses_current_ffmpeg_options(self):
+        from check_subtitle_render import extract
+        p=self.media('extract.mp4')
+        class Crop:
+            cfg={'crop':[0,0,96,96]}
+        rows=extract(p,[{'frame':5},{'frame':23}],Crop(),self.ff,self.work/'frames')
+        self.assertEqual(len(rows),2)
+        self.assertEqual([x['frame'] for x in rows],[5,23])
+        self.assertTrue(all(Path(x['path']).is_file() and digest(x['path'])==x['frame_sha256'] for x in rows))
 
 
 if __name__=='__main__':unittest.main()

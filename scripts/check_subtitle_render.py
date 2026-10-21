@@ -221,7 +221,7 @@ def extract(video, rows, detector, ffmpeg, destination):
     # CFR verified below; n is the actual decoded frame index, not an approximate seek.
     expression = '+'.join(f'eq(n,{f})' for f in frames)
     subprocess.run([ffmpeg, '-v', 'error', '-i', str(video), '-vf',
-                    f"select='{expression}',crop={crop}", '-vsync', '0', '-q:v', '2',
+                    f"select='{expression}',crop={crop}", '-fps_mode', 'passthrough', '-q:v', '2',
                     str(destination / 'frame-%06d.jpg')], check=True, timeout=1800)
     files = list(sorted(destination.glob('frame-*.jpg')))
     if len(files) != len(frames):

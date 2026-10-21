@@ -8,12 +8,18 @@
   ],
   "local_automated": {
     "status": "passed",
-    "tests": 42,
+    "tests": 43,
     "skipped": 0,
     "scope": "Synthetic regressions, actual FFmpeg decode/rebuild/remux and isolated dependency install"
   },
   "native_ci": {
-    "status": "pending"
+    "status": "pending_recovery",
+    "prior_run": 39664250890,
+    "prior_run_outcome": "Windows failures captured; remaining queued jobs cancelled after root cause identified",
+    "corrections": [
+      "Explicit UTF-8 when reading a test receipt",
+      "Current FFmpeg fps_mode replaces removed vsync; actual frame-extraction regression added"
+    ]
   },
   "production_case": {
     "status": "read_only_rerun_completed",

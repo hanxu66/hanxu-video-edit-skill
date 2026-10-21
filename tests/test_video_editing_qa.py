@@ -158,7 +158,7 @@ class ExportRepair(unittest.TestCase):
             result=subprocess.run(cmd,capture_output=True,text=True);self.assertEqual(result.returncode,0,result.stdout+result.stderr)
             report=json.loads((out/'report.json').read_text( encoding="utf-8"));self.assertTrue(report['streamHashes']['identical']);self.assertTrue(native.is_file());self.assertEqual(report['fullDecode'],'exit0')
             bad=r/'missing.mov'
-            subprocess.run([ff,'-v','error','-i',str(native),'-vf',"select='not(eq(n,10))'",'-vsync','vfr','-c:v','libx264','-colorspace','bt709','-c:a','copy',str(bad)],check=True)
+            subprocess.run([ff,'-v','error','-i',str(native),'-vf',"select='not(eq(n,10))'",'-fps_mode','vfr','-c:v','libx264','-colorspace','bt709','-c:a','copy',str(bad)],check=True)
             self.assertIn('nonconstant_or_missing_frame_timestamps',inspect(bad,spec,fp)['errors'])
             # Existing final must never be overwritten by a repeated repair command.
             before=hashlib.sha256(final.read_bytes()).hexdigest();self.assertEqual(subprocess.run(cmd,capture_output=True).returncode,2)
