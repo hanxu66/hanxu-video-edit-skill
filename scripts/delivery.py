@@ -85,6 +85,9 @@ def rebuild(folder,ffmpeg,font_file,output,encoder,captions_ass=None):
     check=verify(folder)
     if check['errors']:raise ValueError('Restore or intentionally revise changed assets before rebuild')
     project=json.loads((folder/'project.json').read_text(encoding='utf-8-sig'));assets={a['role']:a['path'] for a in project['assets']};config=project['render'];font=Path(font_file).expanduser().resolve(strict=True)
+    features=subprocess.run([str(Path(ffmpeg).resolve()),'-hide_banner','-filters'],capture_output=True,text=True,encoding='utf-8',errors='replace')
+    if features.returncode or not any(len(line.split())>1 and line.split()[1]=='ass' for line in features.stdout.splitlines()):
+        raise ValueError('Selected FFmpeg lacks the ass/libass filter; choose a verified subtitle-capable binary before rebuild. Existing files are preserved.')
     captions=str(relative(assets['caption_source']))
     if captions_ass is not None:
         edited=within(captions_ass,folder)

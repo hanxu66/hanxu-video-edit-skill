@@ -31,15 +31,23 @@ def local_path(raw,root):
 def run(argv):
     try:
         p=subprocess.run(argv,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=8,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',PYTHONUTF8='1'))
-        return p.returncode,(p.stdout or p.stderr).strip()[:1800]
+        return p.returncode,(p.stdout if p.returncode==0 else p.stderr[:1800]).strip()
     except (OSError,subprocess.TimeoutExpired) as e:return -1,type(e).__name__
 
 def executable(name,explicit,root):
     candidates=binary_candidates(name,root,explicit)
+    fallback=None
     for p in candidates:
         if p.is_file() and os.access(p,os.X_OK):
             code,msg=run([str(p),'-version'])
-            if code==0:return dict(status='usable',path=str(p.resolve()),version_line=msg.splitlines()[0])
+            if code==0:
+                item=dict(status='usable',path=str(p.resolve()),version_line=msg.splitlines()[0] if msg else 'version output empty')
+                if name!='ffmpeg':return item
+                filter_code,filters=run([str(p),'-hide_banner','-filters'])
+                item['ass_filter']=any(len(row.split())>1 and row.split()[1]=='ass' for row in filters.splitlines()) if filter_code==0 else None
+                if item['ass_filter']:return item
+                if fallback is None:fallback=item
+    if fallback:return fallback
     return dict(status='missing_or_unusable',path=None)
 
 def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=None,task_id=None,reserve_gb=0.5):

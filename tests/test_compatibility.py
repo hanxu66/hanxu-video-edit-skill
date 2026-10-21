@@ -83,7 +83,7 @@ class Compatibility(unittest.TestCase):
         before=set(self.workspace.rglob('*'))
         r=self.cli('setup_local_dependencies.py','--workspace',self.workspace)
         self.assertEqual(set(self.workspace.rglob('*')),before)
-        self.assertTrue(r['python'].endswith('Scripts/python.exe') if os.name=='nt' else r['python'].endswith('bin/python'))
+        self.assertEqual(Path(r['python']).parts[-2:],('Scripts','python.exe') if os.name=='nt' else ('bin','python'))
         r=self.cli('inspect_video_editing_environment.py','--path',self.workspace,'--min-free-gb','0')
         self.assertEqual(r['capacityStatus'],'sufficient')
         self.assertEqual(r['applicationHealth'],'not_tested')
@@ -135,7 +135,12 @@ class Compatibility(unittest.TestCase):
         master=self.base/'original.mp4'
         subprocess.run([str(ffmpeg),'-v','error','-f','lavfi','-i','color=c=blue:s=320x240:r=30','-f','lavfi','-i','sine=frequency=440:sample_rate=48000','-t','1','-c:v','libx264','-c:a','aac',str(master)],check=True)
         bundle=self.make_bundle(master)
-        result=delivery.rebuild(bundle,ffmpeg,font,bundle/'rebuild.mp4','libx264')
+        try:
+            result=delivery.rebuild(bundle,ffmpeg,font,bundle/'rebuild.mp4','libx264')
+        except ValueError:
+            log=bundle/'rebuild.log'
+            if log.is_file():print(log.read_text(encoding='utf-8',errors='replace')[-5000:],file=sys.stderr)
+            raise
         subprocess.run([str(ffmpeg),'-v','error','-i',result['output'],'-f','null','-'],check=True)
         data=json.loads(subprocess.check_output([str(ffprobe),'-v','error','-show_format','-show_streams','-of','json',result['output']]))
         self.assertEqual(data['streams'][0]['codec_name'],'h264')

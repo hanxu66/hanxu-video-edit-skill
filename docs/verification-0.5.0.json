@@ -32,12 +32,12 @@
   "custom_distribution_zip_updated": false,
   "private_media_included": false,
   "tested_script_sha256": {
-    "scripts/delivery.py": "c24f20b1320561d4e5c1bd661730816f106c666cea614636ad98e51f545707fe",
+    "scripts/delivery.py": "954fc14ceb61c6484881618a3b2f205fb60207d3e78734a9502e22a638757308",
     "scripts/review_media.py": "dd210b96efd969224f88d96e6934b8a441b7fe7245707b3014ec09ab166ff609",
     "scripts/setup_local_dependencies.py": "32ec8c5bf3b469d1ae41a730462a4d23b83700ee6226f2ebf9b0831e467aff70",
     "scripts/platform_support.py": "06f4b8658f9fa5e32aa882d44fc12f2fca73a5c1ccd9e9b5c67b7bc2c4366e7b",
     "scripts/session.py": "3b335ff30fe5ff2cef87611b53976e55d3953e3c99a8ad9291539fa88b47a5dd",
     "scripts/inspect_video_editing_environment.py": "c601dffea4cdc49f248ad5d744b9139bf8bbd5433a7c2a0aa20f26e008eadde6",
-    "scripts/doctor.py": "48bca10d12d3ff39842943bc789795d80b9a760d459b53d716dcb117128dcdd8"
+    "scripts/doctor.py": "7788acd2ff775a3ad5120ec13fd27a86f75fbed757ed10a95f158ec477110c8e"
   }
 }

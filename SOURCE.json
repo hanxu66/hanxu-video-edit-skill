@@ -25,7 +25,7 @@
     "update_scope": "GitHub source and instructions only; previously distributed zip retained"
   },
   "localFiles": {
-    ".github/workflows/compatibility.yml": "8660bd7fe6f76e1b47e91ea9fb5a7ff91295b6b28c39b4c8db8cbc00c777d58c",
+    ".github/workflows/compatibility.yml": "fa300181e4694b394d117f58bad149d67aa96520b913766da19a5025b48ed167",
     ".gitignore": "4e95bf0d55b22a6083a453532101145acc62ea43a26a34a331961d562d455e88",
     "README.md": "7b1dee4f6deaa5127cac5d23cacfd90962b24f3ad73a10fa28cd3618af76a383",
     "SKILL.md": "5966222964924e602da3e7f3571ad3a9b937c29b89c55490b6473d0c902676d4",
@@ -33,7 +33,7 @@
     "agents/openai.yaml": "360b974a0970020ee67af367828e22b77cab17b3f39f912c3fd89aeb2e71267f",
     "assets/default-look.json": "6ffa0451a848a9bed2524aba86de7a3e9a548ef96d7bac0ed085465758fa0e85",
     "docs/verification-0.4.1.json": "85393393b4d56af1d0f4a5f0e4abb02b6e30b9325ddc9d539f3bc33689097d79",
-    "docs/verification-0.5.0.json": "5e5b2ab08b426d298c37bbcfaf64a4d046340340fb88c5ef72ccebb1ba7b8434",
+    "docs/verification-0.5.0.json": "0dec61d89abf0ecd6ec626263a92da0ace60d315168e1b4320bada77f9508dea",
     "docs/verification.json": "e21bb8643b1401be9df08fbd7baee50cfd9d5bb8ea69cfed8da00440f28caf1f",
     "docs/更新说明.md": "cea58f5a702e62e94d036a2fa7eb545dca0e9cfb931f671afbe253757dee2aa1",
     "docs/验证范围.md": "98cf135958ba4b36d346d122efffd7ed8a2069e484e2bc3ea43a35e13f6c04d4",
@@ -41,7 +41,7 @@
     "references/剪辑执行标准.md": "f7fdf1944f62a35daba69b3648eaeeab542c788f9ffb88f44f2027ee9a254117",
     "references/动画类型与分镜方法.md": "641027a0c01a35aac27e5cbb6588b5313afc1c0a319788a6f35d4f9cc507320a",
     "references/动画视频制作.md": "4092381399b509a3feb98f6fc213ab815b6cd9812b8d678751f7e82ba9e9b923",
-    "references/双系统使用.md": "c808c006cf9c6db987ca6bd25971dc76eba40c91ec5a3b4aa4c50339fc5730a7",
+    "references/双系统使用.md": "454babe758feaae1d115a63bf276f8b8e9ab525945e1408bbc9429b73384e5e2",
     "references/口播剪辑.md": "b308f7cc0318ff8a9e21b9c2c5cb6dfd6251ecae79388fc577307b7cfb259e61",
     "references/常见问题与局部返修.md": "26bebea2be5b466b9c37c1a5c5cacd1e350c97caa5e579187db61d946c700dfe",
     "references/最终工程交付.md": "7a82d0e6fbf18ed4dce883c096f3cb75a15810c254260bca5a858497d1d74f5f",
@@ -52,14 +52,14 @@
     "references/路由与检查点.md": "7eee71b08d43cb72353493d87d210c5f52fbca100bc0074b7d8a7192776958e7",
     "references/首次上手与依赖.md": "f50d8ce6e44d3d4e68b7835de73b9421116c78e2848e53d934c27150e29397ae",
     "references/默认效果与调整.md": "8ccee96a17c199f6be86895dfecc5639367940048babc28846923b45e57c3675",
-    "scripts/delivery.py": "c24f20b1320561d4e5c1bd661730816f106c666cea614636ad98e51f545707fe",
-    "scripts/doctor.py": "48bca10d12d3ff39842943bc789795d80b9a760d459b53d716dcb117128dcdd8",
+    "scripts/delivery.py": "954fc14ceb61c6484881618a3b2f205fb60207d3e78734a9502e22a638757308",
+    "scripts/doctor.py": "7788acd2ff775a3ad5120ec13fd27a86f75fbed757ed10a95f158ec477110c8e",
     "scripts/inspect_video_editing_environment.py": "c601dffea4cdc49f248ad5d744b9139bf8bbd5433a7c2a0aa20f26e008eadde6",
     "scripts/platform_support.py": "06f4b8658f9fa5e32aa882d44fc12f2fca73a5c1ccd9e9b5c67b7bc2c4366e7b",
     "scripts/review_media.py": "dd210b96efd969224f88d96e6934b8a441b7fe7245707b3014ec09ab166ff609",
     "scripts/session.py": "3b335ff30fe5ff2cef87611b53976e55d3953e3c99a8ad9291539fa88b47a5dd",
     "scripts/setup_local_dependencies.py": "32ec8c5bf3b469d1ae41a730462a4d23b83700ee6226f2ebf9b0831e467aff70",
-    "tests/test_compatibility.py": "25d25c23bfd8f9099b61fa02242057997e322c5a2730cf0505209f895e84683e"
+    "tests/test_compatibility.py": "07b338dcbb6b4d786c365459c590530d507b9b4813839bf402257afa600da1c9"
   },
   "sourceContentHashesRole": "Historical method-import provenance; localFiles below identifies the current repository files."
 }

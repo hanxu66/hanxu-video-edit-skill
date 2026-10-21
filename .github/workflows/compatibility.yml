@@ -1,6 +1,7 @@
 name: Mac and Windows compatibility
 on:
   push:
+    branches: ['**']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -39,6 +40,12 @@ jobs:
         shell: bash
         run: |
           command -v ffmpeg || brew install ffmpeg
+          ffmpeg -hide_banner -filters > "$RUNNER_TEMP/ffmpeg-filters.txt" 2>/dev/null
+          if ! grep -q ' ass ' "$RUNNER_TEMP/ffmpeg-filters.txt"; then
+            brew install ffmpeg-full
+            export PATH="$(brew --prefix ffmpeg-full)/bin:$PATH"
+            echo "$(brew --prefix ffmpeg-full)/bin" >> "$GITHUB_PATH"
+          fi
           ffmpeg -version
           ffprobe -version
       - name: Test native filesystem, Unicode, intake and media rebuild
