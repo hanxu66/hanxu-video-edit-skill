@@ -56,8 +56,13 @@ def main():
     p.add_argument('--audio-policy',choices=('required','optional','silent-preview','intentional-silent'),default='required')
     a=p.parse_args();out=Path(a.report).resolve();media=Path(a.media).resolve()
     if out==media:raise ValueError('Report cannot overwrite input media')
-    result={'status':'failed','issues':['inspection_failed']}
-    try:result=inspect_media(media,binary('ffmpeg',a.ffmpeg),binary('ffprobe',a.ffprobe),a.audio_policy)
+    result={'status':'failed','issues':['inspection_failed'],'media':str(media),
+            'audio_policy':a.audio_policy,'hearing':'unverified','semantic_review':'unverified'}
+    try:
+        # Keep the source identity even when ffprobe cannot open a truncated file.
+        # Intake must stop on that failure, rather than treating it as a stale receipt.
+        result['media_sha256']=digest(media)
+        result=inspect_media(media,binary('ffmpeg',a.ffmpeg),binary('ffprobe',a.ffprobe),a.audio_policy)
     except (ValueError,OSError,KeyError,subprocess.SubprocessError) as error:result['error']=str(error)
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')

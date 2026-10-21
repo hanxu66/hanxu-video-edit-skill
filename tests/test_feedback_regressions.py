@@ -137,6 +137,8 @@ class Feedback(unittest.TestCase):
         report=self.work/'坏片检查.json'
         r=self.cli('check_media_integrity.py','--media',p,'--report',report,'--ffmpeg',self.ff,'--ffprobe',self.fp)
         self.assertEqual(r.returncode,2);self.assertEqual(json.loads(report.read_text(encoding='utf-8'))['status'],'failed')
+        state=self.state();state['task'].update(mode='talking-head',source=str(p),source_integrity=str(report))
+        self.assertEqual(session.plan(state,self.work)['action'],'review_source_issue')
 
     def test_content_plan_stops_at_missing_failed_or_stale_source_report(self):
         state=self.state();source=self.work/'source.mp4';source.write_bytes(b'synthetic corrupt input')
