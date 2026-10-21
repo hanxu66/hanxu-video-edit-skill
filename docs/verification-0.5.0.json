@@ -13,8 +13,8 @@
     "media": "Synthetic 1s FFmpeg ASS rendering/complete decode/audio stream identity; real Unicode/apostrophe paths"
   },
   "remote_ci": {
-    "status": "pending",
-    "url": "https://github.com/hanxu66/hanxu-video-edit-skill/actions/workflows/compatibility.yml",
+    "status": "passed",
+    "url": "https://github.com/hanxu66/hanxu-video-edit-skill/actions/runs/39533736888",
     "matrix": {
       "os": [
         "windows-latest",
@@ -24,7 +24,32 @@
         "3.9",
         "3.12"
       ]
-    }
+    },
+    "tested_commit": "84e802129ebdb0cdfb420210af72ad75b90db714",
+    "verified_at": "2026-10-21T10:38:00.304898+08:00",
+    "tests_per_job": 9,
+    "jobs": [
+      {
+        "name": "compatibility (windows-latest, 3.9)",
+        "conclusion": "success",
+        "url": "https://github.com/hanxu66/hanxu-video-edit-skill/actions/runs/39533736888/job/119005412593"
+      },
+      {
+        "name": "compatibility (windows-latest, 3.12)",
+        "conclusion": "success",
+        "url": "https://github.com/hanxu66/hanxu-video-edit-skill/actions/runs/39533736888/job/119005412757"
+      },
+      {
+        "name": "compatibility (macos-latest, 3.12)",
+        "conclusion": "success",
+        "url": "https://github.com/hanxu66/hanxu-video-edit-skill/actions/runs/39533736888/job/119005412789"
+      },
+      {
+        "name": "compatibility (macos-latest, 3.9)",
+        "conclusion": "success",
+        "url": "https://github.com/hanxu66/hanxu-video-edit-skill/actions/runs/39533736888/job/119005412845"
+      }
+    ]
   },
   "native_gui_and_new_user_full_edit_verified_on_windows": false,
   "cross_machine_native_restore_verified": false,
