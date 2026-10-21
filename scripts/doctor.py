@@ -50,7 +50,7 @@ def executable(name,explicit,root):
     if fallback:return fallback
     return dict(status='missing_or_unusable',path=None)
 
-def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=None,task_id=None,reserve_gb=0.5):
+def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=None,task_id=None,reserve_gb=0.5,media_check_report=None):
     root=Path(root).resolve(strict=True)
     if root.is_relative_to(Path(__file__).resolve().parents[1]):raise ValueError('Choose a separate editing workspace, outside the installed skill')
     binaries={n:executable(n,x,root) for n,x in [('ffmpeg',ffmpeg),('ffprobe',ffprobe)]}
@@ -93,23 +93,34 @@ def assess(root,stage,source=None,ffmpeg=None,ffprobe=None,font=None,receipt=Non
     if media['status']=='missing':blockers.append('source_missing_keep_progress')
     if media.get('probe_status')=='failed':blockers.append('media_probe_failed')
     if free<floor+budget:blockers.append('insufficient_space')
+    final_media_check={'status':'not_checked','hearing':'unverified','semantic_review':'unverified'}
     if stage=='review':
+        if not source:blockers.append('final_media_required')
+        if not media_check_report:blockers.append('final_media_integrity_report_required')
+        else:
+            data=json.loads(local_path(media_check_report,root).read_text(encoding='utf-8-sig'))
+            from check_subtitle_render import digest
+            if not source or not Path(source).is_file() or data.get('media_sha256')!=digest(source):
+                blockers.append('final_media_integrity_report_stale')
+            elif data.get('status')!='passed':blockers.append('final_media_integrity_failed')
+            else:final_media_check=data
         blockers.extend(n+'_missing' for n in binaries if binaries[n]['status']!='usable')
     blockers.extend(unproven)
     actions=[]
     if unproven:actions.append({'owner':'agent','action':'Discover actual host tools and read the intended test project, then record evidence; app installation alone is not connection.'})
     if any(x['status']!='usable' for x in binaries.values()):actions.append({'owner':'agent','action':'Locate host-bundled runtime or accept an explicit binary path before asking the user to install anything; do not use a developer-only path.'})
     if checks['pillow']['status']=='missing':actions.append({'owner':'agent','action':'Only if glyph measurement is needed, prepare project-local dependencies; native editing can continue.'})
-    return {'schema_version':1,'observed_at':datetime.now(timezone.utc).isoformat(),'workspace':str(root),'stage':stage,'platform':platform.system(),'host':host_info(),'python_checks':checks,'binaries':binaries,'applications':observe_apps(),'source':media,'capacity':{'free_bytes':free,'required_bytes':floor+budget,'sufficient':free>=floor+budget},'capabilities':observations,'blocking_checks':blockers,'stage_status':'ready_for_checked_stage' if not blockers else 'needs_checks_or_action','can_continue_intake':True,'next_actions':actions,'scope':'read-only observations, no install/login/global changes; no proof of media quality or fresh-user success'}
+    return {'schema_version':1,'observed_at':datetime.now(timezone.utc).isoformat(),'workspace':str(root),'stage':stage,'platform':platform.system(),'host':host_info(),'python_checks':checks,'binaries':binaries,'applications':observe_apps(),'source':media,'final_media_check':final_media_check,'capacity':{'free_bytes':free,'required_bytes':floor+budget,'sufficient':free>=floor+budget},'capabilities':observations,'blocking_checks':blockers,'stage_status':'ready_for_checked_stage' if not blockers else 'needs_checks_or_action','can_continue_intake':True,'next_actions':actions,'scope':'read-only observations, no install/login/global changes; no proof of media quality or fresh-user success'}
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--workspace',type=Path,required=True);p.add_argument('--stage',choices=tuple(CAPABILITIES),default='content');p.add_argument('--source');p.add_argument('--ffmpeg');p.add_argument('--ffprobe');p.add_argument('--font');p.add_argument('--capabilities-file');p.add_argument('--task-id');p.add_argument('--reserve-gb',type=float,default=.5);p.add_argument('--report',type=Path)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--workspace',type=Path,required=True);p.add_argument('--stage',choices=tuple(CAPABILITIES),default='content');p.add_argument('--source');p.add_argument('--media-check-report');p.add_argument('--ffmpeg');p.add_argument('--ffprobe');p.add_argument('--font');p.add_argument('--capabilities-file');p.add_argument('--task-id');p.add_argument('--reserve-gb',type=float,default=.5);p.add_argument('--report',type=Path)
     a=p.parse_args()
     if not 0<=a.reserve_gb<100000:raise ValueError('Invalid reserve')
-    root=a.workspace.resolve(strict=True);report=assess(root,a.stage,a.source,a.ffmpeg,a.ffprobe,a.font,a.capabilities_file,a.task_id,a.reserve_gb)
+    root=a.workspace.resolve(strict=True);report=assess(root,a.stage,a.source,a.ffmpeg,a.ffprobe,a.font,a.capabilities_file,a.task_id,a.reserve_gb,a.media_check_report)
     if a.report:
         out=local_path(a.report,root);out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n', encoding='utf-8')
     print(json.dumps(report,ensure_ascii=False,indent=2))
+    if report['blocking_checks']:raise SystemExit(2)
 
 # Keep Unicode paths/JSON readable in Windows terminals and redirected output.
 for _stream in (sys.stdout, sys.stderr):

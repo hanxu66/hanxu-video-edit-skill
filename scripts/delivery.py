@@ -78,6 +78,14 @@ def verify(folder):
         elif target.stat().st_size!=a['bytes'] or digest(target)!=a['sha256']:errors.append(a['role']+':changed')
     return {'revision':p['revision'],'delivery_level':p['delivery_level'],'assets_verified':len(p['assets'])-len(errors),'errors':errors,'status':'passed' if not errors else 'failed','native_final_verified':p['delivery_level']=='native_complete'}
 
+def validate_ass(path):
+    path=Path(path)
+    text=path.read_text(encoding='utf-8-sig')
+    if not all(section in text for section in ('[Script Info]','[Events]')):
+        raise ValueError('caption_source/--captions-ass must contain ASS [Script Info] and [Events]; subtitles is the SRT role, JSON card plans are not renderable ASS')
+    return path
+
+
 def rebuild(folder,ffmpeg,font_file,output,encoder,captions_ass=None):
     if encoder=='h264_videotoolbox' and platform.system()!='Darwin':raise ValueError('h264_videotoolbox is Mac-only; use libx264 on Windows')
     folder=Path(folder).resolve(strict=True);out=within(output,folder)
@@ -89,9 +97,11 @@ def rebuild(folder,ffmpeg,font_file,output,encoder,captions_ass=None):
     if features.returncode or not any(len(line.split())>1 and line.split()[1]=='ass' for line in features.stdout.splitlines()):
         raise ValueError('Selected FFmpeg lacks the ass/libass filter; choose a verified subtitle-capable binary before rebuild. Existing files are preserved.')
     captions=str(relative(assets['caption_source']))
+    validate_ass(folder/captions)
     if captions_ass is not None:
         edited=within(captions_ass,folder)
         if not edited.is_file():raise ValueError('Edited captions missing')
+        validate_ass(edited)
         captions=str(relative(edited.relative_to(folder).as_posix()))
     # Stage only the caller-selected licensed font inside the bundle cache.
     # Relative ASCII filter paths avoid Windows drive-colon/backslash and

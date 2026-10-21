@@ -48,5 +48,7 @@ jobs:
           fi
           ffmpeg -version
           ffprobe -version
+      - name: Install test-only dependencies
+        run: python -m pip install Pillow
       - name: Test native filesystem, Unicode, intake and media rebuild
         run: python -B -m unittest discover -s tests -v

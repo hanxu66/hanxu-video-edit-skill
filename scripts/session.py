@@ -30,9 +30,19 @@ TASK_KEYS = {'mode', 'source', 'script', 'brief', 'audio', 'script_approved',
              'animation_type', 'animation_scope', 'avatar_mode',
              'delivery_scope', 'stage', 'status', 'preflight', 'project',
              'revision', 'deliverables', 'checks', 'blocker', 'user_quote',
-             'source_protection', 'visual_plan', 'scene_plan'}
+             'source_protection', 'visual_plan', 'scene_plan', 'voice_plan', 'source_integrity'}
 STAGES = ('intake', 'content', 'editing', 'appearance', 'handoff', 'packaging', 'export', 'review', 'done')
 STATUSES = ('intake', 'working', 'blocked', 'review', 'accepted', 'paused')
+
+
+class InputError(ValueError):
+    def __init__(self,message,**details):
+        super().__init__(message);self.details=details
+
+
+def choice(value,allowed,field):
+    if value not in allowed:
+        raise InputError('Unsupported '+field,field=field,received=value,allowed=list(allowed))
 
 
 def now():
@@ -103,8 +113,8 @@ def fresh_task(profile):
                 animation_scope='local', avatar_mode='none', delivery_scope='formal',
                 stage='intake', status='intake', overrides={}, preflight={},
                 profile_snapshot=snapshot,
-                project=None, revision='r1', deliverables={}, checks={}, blocker=None,
-                source_protection={}, visual_plan={}, scene_plan={})
+                project=None, revision='r1', qa_contract=2, deliverables={}, checks={}, blocker=None,
+                source_protection={}, visual_plan={}, scene_plan={}, voice_plan={'status':'not_selected'}, source_integrity=None)
 
 
 def validate(state, root):
@@ -114,19 +124,22 @@ def validate(state, root):
         return
     settings_valid(task['overrides'])
     settings_valid(task.get('profile_snapshot', {}))
-    if task['mode'] is not None and task['mode'] not in MODES:
-        raise ValueError('Unknown editing mode')
-    if task['stage'] not in STAGES or task['status'] not in STATUSES:
-        raise ValueError('Unknown stage/status')
+    choice(task['mode'],(None,)+MODES,'mode')
+    choice(task['stage'],STAGES,'stage');choice(task['status'],STATUSES,'status')
     if type(task['script_approved']) is not bool:
         raise ValueError('script_approved must be boolean')
-    if task['animation_type'] not in (None, 'PPT型', '故事型'):
-        raise ValueError('Unknown animation type')
-    if task['avatar_mode'] not in ('none', 'circle') or task['animation_scope'] not in ('local', 'main'):
-        raise ValueError('Unknown avatar/animation scope')
-    if task['delivery_scope'] not in ('formal', 'review'):
-        raise ValueError('Unknown delivery scope')
-    for key in ('source', 'script', 'audio'):
+    choice(task['animation_type'],(None,'PPT型','故事型'),'animation_type')
+    choice(task['avatar_mode'],('none','circle'),'avatar_mode')
+    choice(task['animation_scope'],('local','main'),'animation_scope')
+    choice(task['delivery_scope'],('formal','review'),'delivery_scope')
+    voice=task.get('voice_plan',{'status':'not_selected'})
+    if not isinstance(voice,dict):raise ValueError('voice_plan must be an object')
+    choice(voice.get('status'),('not_selected','ready','declined','silent_preview','intentional_silent'),'voice_plan.status')
+    if voice.get('status')=='intentional_silent' and not voice.get('user_quote'):
+        raise ValueError('Intentional silent work needs the actual user request in voice_plan.user_quote')
+    if voice.get('status')=='silent_preview' and (task['status']=='accepted' or task['delivery_scope']=='formal'):
+        raise ValueError('Silent preview is unfinished: retain review scope/status, never formal or accepted')
+    for key in ('source', 'script', 'audio', 'source_integrity'):
         path = task.get(key)
         if path is not None and (not isinstance(path, str) or not path.strip()):
             raise ValueError(key + ' must be a file path or null')
@@ -140,6 +153,21 @@ def validate(state, root):
             raise ValueError('Deliverable does not exist inside workspace: ' + label)
     if task['status'] in ('review', 'accepted') and not {'video', 'cover'} <= set(task['deliverables']):
         raise ValueError('Review/acceptance requires actual video and cover files')
+    if task.get('qa_contract')==2 and task['status'] in ('review','accepted'):
+        raw=task['deliverables'].get('media_integrity')
+        if not raw:raise ValueError('Final review requires media_integrity report for this exact video; environment readiness is not final QA')
+        from check_subtitle_render import digest
+        report=json.loads(inside(Path(raw),root).read_text(encoding='utf-8-sig'))
+        if report.get('status')!='passed' or report.get('media_sha256')!=digest(task['deliverables']['video']):
+            raise ValueError('Final media integrity failed or is stale')
+        policy=report.get('audio_policy')
+        expected='silent-preview' if voice.get('status')=='silent_preview' else 'intentional-silent' if voice.get('status')=='intentional_silent' else 'required'
+        if policy!=expected:raise ValueError('Final audio policy does not match the task voice state')
+        if voice.get('status')=='declined':raise ValueError('Voice generation is paused, not completed')
+        if task['delivery_scope']=='formal':
+            from manage_video_editing_run import checklist
+            if task.get('editingExecution',{}).get('revision')!=task['revision'] or checklist(task)['pending']:
+                raise ValueError('Formal final delivery requires the current nine-item packaging evidence checklist')
     if task['delivery_scope'] == 'formal' and task['status'] in ('review', 'accepted'):
         raw = task['deliverables'].get('delivery_manifest')
         if not raw:
@@ -150,6 +178,11 @@ def validate(state, root):
         from delivery import verify
         if verify(Path(raw).parent)['errors']:
             raise ValueError('Native delivery assets have changed or are missing')
+        assets={x['role']:x for x in manifest['assets']}
+        from check_subtitle_render import digest
+        for role in ('video','cover'):
+            if role not in assets or assets[role]['sha256']!=digest(task['deliverables'][role]):
+                raise ValueError('Native bundle '+role+' differs from current delivered file')
 
 
 def effective(state):
@@ -170,6 +203,8 @@ def effective(state):
 def plan(state, root):
     task = state.get('task')
     result = {'effective_settings': effective(state), 'task_id': task['id'] if task else None}
+    if task and task.get('voice_plan',{}).get('status')=='silent_preview':
+        result.update(delivery_label='静音预览｜尚未配音，节奏未锁定',duration_locked=False)
     def answer(action, message, **extras):
         return dict(result, action=action, message=message, **extras)
     if task and task['status'] == 'paused':
@@ -197,6 +232,21 @@ def plan(state, root):
         return answer('ask_video', '请提供这条的原视频或它在电脑上的文件位置。')
     if task.get('source') and not Path(task['source']).expanduser().resolve().is_relative_to(root):
         return answer('protect_material', '先把项目外原片保存为本条可校验的工作副本，再导入剪辑；不要求使用者手动复制。')
+    voice_status=task.get('voice_plan',{}).get('status')
+    silent=voice_status in ('silent_preview','intentional_silent')
+    if voice_status=='silent_preview':
+        result['delivery_label']='静音预览｜尚未配音，节奏未锁定'
+        result['duration_locked']=False
+    if task.get('qa_contract')==2 and task.get('source'):
+        raw=task.get('source_integrity')
+        if not raw or not inside(Path(raw),root).is_file():
+            return answer('check_source_integrity','工作副本已保存。先检查原片的实际解码、时长和本次需要的声音，再进入内容剪辑；复制一致不代表原片完整。')
+        integrity=json.loads(inside(Path(raw),root).read_text(encoding='utf-8-sig'))
+        from check_subtitle_render import digest
+        if integrity.get('media_sha256')!=digest(task['source']):
+            return answer('check_source_integrity','素材已变化，重新检查当前文件；保留已有剪辑进度。')
+        if integrity.get('status')!='passed':
+            return answer('review_source_issue','原片完整性或声音检查发现问题，先说明实际受影响范围；不把不完整回放当成完整素材继续。',issues=integrity.get('issues',[]))
     if mode == 'ai-only':
         if not task['script']:
             return answer('draft_script', '根据已有主题和真实材料准备确认稿，不编造个人事实。')
@@ -204,7 +254,9 @@ def plan(state, root):
             return answer('confirm_script', '把本条完整稿件交使用者确认后再生成配音。')
         if task['animation_type'] is None:
             return answer('ask_animation_type', '画面想用观点图解（PPT型），还是用连续动作讲故事？')
-        if not task['audio'] and not result['effective_settings']['voice_source']:
+        if voice_status=='declined':
+            return answer('voice_paused','配音生成已取消，保留稿件和画面进度。可提供录音、稍后继续配音，或明确选择静音预览；不自动再次提交。')
+        if not silent and not task['audio'] and not result['effective_settings']['voice_source']:
             return answer('ask_voice', '声音用你已有的录音，还是选择一个可用的AI配音音色？')
     if mode == 'user-interview' and task['stage'] in ('editing', 'appearance', 'handoff', 'packaging', 'export'):
         if task.get('scene_plan', {}).get('purpose') != 'research' and not task['checks'].get('interview_structure_approved'):
@@ -234,7 +286,7 @@ def plan(state, root):
         required += ['editable_handoff_available', 'jianying_control_available']
     if mode in ANIMATION_MODES and task['stage'] not in ('intake', 'content', 'editing'):
         required += ['motion_graphics_available']
-    if mode == 'ai-only' and not task['audio']:
+    if mode == 'ai-only' and not task['audio'] and not silent:
         required += ['voice_generation_available']
     missing = [name for name in required if task['preflight'].get(name) is not True]
     if missing:
@@ -273,7 +325,7 @@ def protect_source(state, root, reserve_gb):
         if digest(temp) != source_hash or digest(source) != source_hash:
             raise ValueError('Source changed or copy verification failed; retained the copy checkpoint')
         os.replace(temp, dest)
-    task['source_protection'] = dict(original_path=str(source), working_path=str(dest), sha256=source_hash, bytes=size, verified_at=now())
+    task['source_protection'] = dict(original_path=str(source), working_path=str(dest), sha256=source_hash, bytes=size, verified_at=now(), copy_identity='matched', media_decodability='not_checked')
     task['source'] = str(dest)
     return {'action': 'source_protected', **task['source_protection']}
 
@@ -337,15 +389,15 @@ def main():
                 merge_settings(state['task']['overrides'], patch)
             else:
                 if set(patch) - TASK_KEYS:
-                    raise ValueError('Unknown task keys')
+                    raise InputError('Unknown task keys; use --scope overrides for settings such as speed or display_name',received=sorted(set(patch)-TASK_KEYS),allowed=sorted(TASK_KEYS))
                 for key in ('source', 'script', 'audio'):
                     if key in patch and patch[key] is not None and patch[key] != state['task'].get(key):
                         if not isinstance(patch[key], str) or not Path(patch[key]).expanduser().is_file():
-                            raise ValueError(key + ' must reference a real readable new input file')
+                            raise InputError(key + ' must reference a real readable new input file',field=key,received=patch[key],action='Check the exact filename and path; do not silently invent an extension')
                 changed_source = any(key in patch and patch[key] != state['task'].get(key)
                                      for key in ('source', 'script', 'audio', 'mode', 'animation_type'))
                 if changed_source:
-                    state['task'].update(checks={}, deliverables={}, stage='intake', status='intake')
+                    state['task'].update(checks={}, deliverables={}, stage='intake', status='intake', source_integrity=None)
                 if 'mode' in patch and patch['mode'] != state['task'].get('mode'):
                     is_ai = patch['mode'] == 'ai-only'
                     state['task']['delivery_scope'] = 'review' if is_ai else 'formal'
@@ -387,5 +439,6 @@ if __name__ == '__main__':
     try:
         main()
     except (ValueError, OSError, KeyError, json.JSONDecodeError) as exc:
-        print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
+        print(json.dumps({'error': str(exc), **getattr(exc,'details',{})}, ensure_ascii=False), file=sys.stderr)
+        raise SystemExit(2)
         raise SystemExit(2)

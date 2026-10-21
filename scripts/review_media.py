@@ -9,6 +9,12 @@ import subprocess
 
 
 def audit(cards, timing=None, measure=None, max_width=960):
+    if not isinstance(cards,list) or not cards:raise ValueError('cards must be a nonempty array of {text,start_us,end_us}; times are integer microseconds')
+    for i,c in enumerate(cards):
+        if not isinstance(c,dict) or not {'text','start_us','end_us'}<=set(c):
+            raise ValueError('card '+str(i+1)+' requires text, start_us, end_us (integer microseconds, not start/end seconds)')
+        if not isinstance(c['text'],str) or any(type(c[k]) is not int or c[k]<0 for k in ('start_us','end_us')):
+            raise ValueError('Invalid card text/time types; use text and nonnegative integer microseconds')
     issues=[];previous_end=0
     for i,c in enumerate(cards):
         start,end=c['start_us'],c['end_us'];text=c['text']
@@ -58,4 +64,7 @@ for _stream in (sys.stdout, sys.stderr):
     if __name__ == "__main__" and hasattr(_stream, "reconfigure"):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    try:main()
+    except (ValueError,KeyError,TypeError,OSError) as error:
+        print(json.dumps({'error':str(error)},ensure_ascii=False),file=sys.stderr);raise SystemExit(2)

@@ -1,0 +1,40 @@
+{
+  "version": "0.6.0",
+  "date": "2026-10-22",
+  "target_host": "Codex Desktop",
+  "platforms": [
+    "macOS",
+    "native Windows"
+  ],
+  "local_automated": {
+    "status": "passed",
+    "tests": 42,
+    "skipped": 0,
+    "scope": "Synthetic regressions, actual FFmpeg decode/rebuild/remux and isolated dependency install"
+  },
+  "native_ci": {
+    "status": "pending"
+  },
+  "production_case": {
+    "status": "read_only_rerun_completed",
+    "cards": 633,
+    "coverage": 633,
+    "suspects": 21,
+    "unresolved": 0,
+    "review_method": "Exact frame hash match to prior reviewed evidence; no new hearing claim",
+    "calibration_native_samples": 6,
+    "synthetic_controls": 4
+  },
+  "default_parameters": "unchanged",
+  "not_proven": [
+    "fresh user desktop installation/login/connection",
+    "Windows GUI and native handoff on a user machine",
+    "new fonts/colors/dynamic subtitle profiles",
+    "other agent hosts",
+    "cross-video speedup",
+    "new hearing or publishing approval"
+  ],
+  "private_assets_included": false,
+  "zip_updated": false,
+  "formal_system_modified": false
+}

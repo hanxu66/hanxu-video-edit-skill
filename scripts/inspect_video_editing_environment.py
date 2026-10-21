@@ -95,9 +95,18 @@ def main():
                         help="GiB floor, default 5; configurable capacity budget, not app guarantee")
     parser.add_argument("--reserve-gb", type=nonnegative, default=0,
                         help="Additional estimated remaining output/cache GiB per volume")
+    parser.add_argument("--budget-plan", type=Path, help="Complete remaining per-volume allocation plan")
     args = parser.parse_args()
     try:
-        volumes = capacity(args.path, args.min_free_gb, args.reserve_gb)
+        if args.budget_plan:
+            from manage_video_editing_run import budget
+            if args.reserve_gb: raise ValueError('Use budget-plan or reserve-gb, not both')
+            plan_path=args.budget_plan.resolve()
+            complete=budget(json.loads(plan_path.read_text(encoding='utf-8-sig')),plan_path.parent,args.path,args.min_free_gb)
+            volumes=complete['volumes']
+        else:
+            complete=None
+            volumes = capacity(args.path, args.min_free_gb, args.reserve_gb)
     except (OSError, ValueError) as exc:
         print(json.dumps({"capacityStatus": "unknown", "error": str(exc)}))
         return 1
@@ -105,7 +114,8 @@ def main():
     report = {"observedAt": datetime.now(timezone.utc).isoformat(),
               "capacityStatus": "sufficient" if sufficient else "insufficient",
               "minFreeGiB": args.min_free_gb, "reserveGiB": args.reserve_gb,
-              "remainingWorkEstimateProvided": args.reserve_gb > 0,
+              "remainingWorkEstimateProvided": bool(complete) or args.reserve_gb > 0,
+              "completeBudget": complete,
               "volumes": volumes, "processes": app_observation(),
               "applicationHealth": "not_tested"}
     if platform.system() == "Darwin":
