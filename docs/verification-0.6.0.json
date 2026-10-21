@@ -13,12 +13,33 @@
     "scope": "Synthetic regressions, actual FFmpeg decode/rebuild/remux and isolated dependency install"
   },
   "native_ci": {
-    "status": "pending_recovery",
-    "prior_run": 39664250890,
-    "prior_run_outcome": "Windows failures captured; remaining queued jobs cancelled after root cause identified",
-    "corrections": [
-      "Explicit UTF-8 when reading a test receipt",
-      "Current FFmpeg fps_mode replaces removed vsync; actual frame-extraction regression added"
+    "status": "windows_passed_macos_queued_at_publication",
+    "tested_commit": "7a2e133969d65acc289daf8d6894452ddee8fc98",
+    "url": "https://github.com/hanxu66/hanxu-video-edit-skill/actions/runs/39665841116",
+    "windows_jobs_passed": 2,
+    "tests_per_completed_job": 43,
+    "skipped": 0,
+    "macos_jobs": [
+      {
+        "name": "compatibility (macos-latest, 3.12)",
+        "status": "queued",
+        "conclusion": ""
+      },
+      {
+        "name": "compatibility (macos-latest, 3.9)",
+        "status": "queued",
+        "conclusion": ""
+      }
+    ],
+    "prior_runs": [
+      {
+        "id": 39664250890,
+        "outcome": "Windows exposed removed vsync and a test encoding read; corrected, failed history retained"
+      },
+      {
+        "id": 39665045954,
+        "outcome": "Windows both passed; queued Mac jobs cancelled for a final bad-source recovery correction"
+      }
     ]
   },
   "production_case": {
@@ -42,5 +63,53 @@
   ],
   "private_assets_included": false,
   "zip_updated": false,
-  "formal_system_modified": false
+  "formal_system_modified": false,
+  "native_validation_matrix": [
+    {
+      "os": "macOS",
+      "python": "3.9.6",
+      "venue": "native local Mac, project-isolated runtime",
+      "tests": 43,
+      "skipped": 0,
+      "status": "passed"
+    },
+    {
+      "os": "macOS",
+      "python": "3.12.14",
+      "venue": "native local Mac",
+      "tests": 43,
+      "skipped": 0,
+      "status": "passed"
+    },
+    {
+      "os": "Windows",
+      "python": "3.9",
+      "venue": "GitHub native Windows runner",
+      "tests": 43,
+      "skipped": 0,
+      "status": "passed"
+    },
+    {
+      "os": "Windows",
+      "python": "3.12",
+      "venue": "GitHub native Windows runner",
+      "tests": 43,
+      "skipped": 0,
+      "status": "passed"
+    }
+  ],
+  "tested_scripts": {
+    "scripts/check_media_integrity.py": "de2a76321e7cf8c47a48b6b4625f0e6645ea6156ad6205420bbe448436c8fb16",
+    "scripts/check_subtitle_render.py": "cf05a720eb4f5d614ed753f392c21c4f8a93fc7b3143271c391588a1b49068c3",
+    "scripts/check_subtitle_width.py": "8f38353506071441c7c26fd8310a80b5d6206a9fa88e5d96ee9f456060f36a9f",
+    "scripts/check_video_export.py": "2349597a05012fba732f483e5bd690d71c5bcac51f1c670a8558cef8b248edba",
+    "scripts/delivery.py": "4bf55bfcc4f44d5e65edc37e29acce4a32b39c7b140e23e58310375c47162573",
+    "scripts/doctor.py": "0bf3e5e66041f08b5e064348074004c5b4d60a98a1c1f2cd06e2fdc57a63c5f9",
+    "scripts/inspect_video_editing_environment.py": "a40fc868bd2d3ec3022752b12b910ff6eb4164ea234e72570eaaf289adaf2f78",
+    "scripts/manage_video_editing_run.py": "fc83926e5df8abf6498e6bd8850be692199f8d760f05d4367ce6468d4d098e42",
+    "scripts/platform_support.py": "06f4b8658f9fa5e32aa882d44fc12f2fca73a5c1ccd9e9b5c67b7bc2c4366e7b",
+    "scripts/review_media.py": "d18ff5d73752767212b86f26fd78db8a22f1ac9df270d0979df8b24cb73fca5e",
+    "scripts/session.py": "82ccadc37a6e03c5f7b64d7cb4dee6ee1947e1cd9b693881d512acbe7ea9391a",
+    "scripts/setup_local_dependencies.py": "32ec8c5bf3b469d1ae41a730462a4d23b83700ee6226f2ebf9b0831e467aff70"
+  }
 }
