@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 20
     env:
       PYTHONDONTWRITEBYTECODE: '1'
-      TEST_WORKSPACE: ${{ runner.temp }}/hanxu-video-compatibility
+      TEST_WORKSPACE: ${{ github.workspace }}/../hanxu-video-compatibility
       REQUIRE_MEDIA_TEST: '1'
     steps:
       - uses: actions/checkout@v4

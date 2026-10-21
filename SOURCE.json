@@ -25,7 +25,7 @@
     "update_scope": "GitHub source and instructions only; previously distributed zip retained"
   },
   "localFiles": {
-    ".github/workflows/compatibility.yml": "432fdf45f549f5537f1753e2a1fefa4d4ecd46e5b6aa200a6b697706eb21a572",
+    ".github/workflows/compatibility.yml": "8660bd7fe6f76e1b47e91ea9fb5a7ff91295b6b28c39b4c8db8cbc00c777d58c",
     ".gitignore": "4e95bf0d55b22a6083a453532101145acc62ea43a26a34a331961d562d455e88",
     "README.md": "7b1dee4f6deaa5127cac5d23cacfd90962b24f3ad73a10fa28cd3618af76a383",
     "SKILL.md": "5966222964924e602da3e7f3571ad3a9b937c29b89c55490b6473d0c902676d4",
