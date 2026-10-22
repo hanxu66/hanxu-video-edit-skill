@@ -1,4 +1,4 @@
 interface:
-  display_name: "韩叙视频剪辑 skill"
-  short_description: "把视频或稿件交给我，通过对话完成口播剪辑、讲解动画和纯AI视频制作"
+  display_name: "韩叙视频剪辑 skill｜用 Codex 对话剪视频"
+  short_description: "支持口播、访谈、直播切片和 AI 视频，包含字幕、调色、封面与可编辑工程交付，兼容 Mac 和 Windows。"
   default_prompt: "使用 $hanxu-video-edit-skill 帮我开始剪辑，需要什么信息就问我。"
