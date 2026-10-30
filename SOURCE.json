@@ -39,8 +39,8 @@
     "docs/verification-0.5.0.json": "4fa6c6edbaacb031ccbbf1ffc499c461a9d1c4587868eb501eacd88bbb733596",
     "docs/verification-0.6.0.json": "9a45eba7c017e1b4daebb7e1f2774a95adaf0aa9a7e7e34eee1a7f318b2c4275",
     "docs/verification.json": "e21bb8643b1401be9df08fbd7baee50cfd9d5bb8ea69cfed8da00440f28caf1f",
-    "docs/更新说明.md": "78aa0960dbca41f6d57a1460138246d36635aba28130f7d61d75e22609cc4790",
-    "docs/验证范围.md": "28b173ecc7a053b9466688dce844c2a4b485d8030c9caa6a5a16dbe63962b2c9",
+    "docs/更新说明.md": "74339f6f878e4c0c846fd7415f0e9a63c9e6a481b380a381be3e615972d59a5b",
+    "docs/验证范围.md": "fd33aefe27080f2947136748f207037bbaa722c37a04c2d29de7c1de126ff0b1",
     "references/产品介绍视频.md": "f712f9aa5c11a2a29f1dedb426fe9c2384183e321023bf582e80f97954ea5f76",
     "references/剪辑执行标准.md": "bf0f012a89d524a52760c5e16778afe319a83391bfe7ce3bd88ae58ca0a349e4",
     "references/动画类型与分镜方法.md": "300ea8c80b75b8d8be3ea7459672b001ed46067b045a00480ce6dad5b52c0126",
@@ -71,11 +71,11 @@
     "scripts/session.py": "e80f2012ebef50d96e8d3b025d506af8385011cf19f5b880c87b95f5f746d2cb",
     "scripts/setup_local_dependencies.py": "32ec8c5bf3b469d1ae41a730462a4d23b83700ee6226f2ebf9b0831e467aff70",
     "tests/test_compatibility.py": "07b338dcbb6b4d786c365459c590530d507b9b4813839bf402257afa600da1c9",
-    "tests/test_feedback_regressions.py": "8ab8c8e347d2ad0e2357fc0b92c0c7e13ca1742c1ea5995a9d0bd1f35771e9bc",
+    "tests/test_feedback_regressions.py": "3182275482387fa5baf8748f82ca4a0667a981a1ea2c650a455df5b23dec6136",
     "tests/test_subtitle_width.py": "aa79a996802b3a93a059564bedffadac201c292b398646f13a790f457696559b",
     "tests/test_video_editing_qa.py": "c532ae779704b0b8697abe0050ca55c5a7a269a9ed1ad8b8b71ec4942d655ef0",
     "references/剪辑Agent.md": "ddb1f0245ab07c1da4e9b37cd0d3c1c86a48277ee27b82740c094d4f39b2e551",
-    "tests/test_delivery_revisions.py": "c460dd37d78b2187a49a618548f175675bae092aff3d81922b52ee5b9f564db9"
+    "tests/test_delivery_revisions.py": "6fa7811a6902b50dbc2d2a696fc99c61a8aa01a4201cac9095a38086b3ebe256"
   },
   "sourceContentHashesRole": "Historical method-import provenance; localFiles below identifies the current repository files.",
   "reusableToolImports": {

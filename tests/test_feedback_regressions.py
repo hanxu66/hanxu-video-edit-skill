@@ -106,7 +106,7 @@ class Feedback(unittest.TestCase):
         patch=self.write('name.json',{'name_size':old['profile_snapshot']['name_size']+1})
         r=self.cli('session.py','--workspace',self.work,'update','--scope','overrides','--data-file',patch)
         self.assertEqual(r.returncode,0,r.stderr)
-        updated=json.loads(path.read_text());task=updated['task']
+        updated=json.loads(path.read_text(encoding='utf-8'));task=updated['task']
         self.assertNotEqual(task['revision'],old['revision'])
         self.assertEqual((task['status'],task['stage']),('working','appearance'))
         self.assertEqual(task['deliverables'],{})
@@ -127,7 +127,7 @@ class Feedback(unittest.TestCase):
         for scope,patch in [('overrides',{'name_size':old['profile_snapshot']['name_size']}),('profile',{'name_size':old['profile_snapshot']['name_size']+3})]:
             r=self.cli('session.py','--workspace',self.work,'update','--scope',scope,'--data-file',self.write('patch.json',patch))
             self.assertEqual(r.returncode,0,r.stderr)
-            current=json.loads(path.read_text())
+            current=json.loads(path.read_text(encoding='utf-8'))
             self.assertEqual(current['task']['revision'],'r1');self.assertEqual(current['task']['status'],'review')
             self.assertEqual(current['task']['deliverables'],old['deliverables']);self.assertNotIn('revision_history',current)
 
@@ -137,7 +137,7 @@ class Feedback(unittest.TestCase):
         patch=self.write('speed.json',{'speed':1.3})
         r=self.cli('session.py','--workspace',self.work,'update','--scope','overrides','--data-file',patch)
         self.assertEqual(r.returncode,0,r.stderr)
-        current=json.loads(path.read_text());task=current['task']
+        current=json.loads(path.read_text(encoding='utf-8'));task=current['task']
         self.assertNotEqual(task['revision'],'custom-final');self.assertEqual(task['stage'],'editing');self.assertEqual(task['status'],'paused')
         self.assertEqual(session.effective(current)['speed'],1.3)
         for key in ('beauty_parameters','body_parameters','color_adjustments','audio_gain_db'):

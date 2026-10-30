@@ -85,7 +85,7 @@ class DeliveryRevisions(unittest.TestCase):
 
     def test_manifest_cannot_drop_subtitles_but_keep_native_complete(self):
         folder, _ = self.build(self.spec())
-        path = folder / 'project.json'; data = json.loads(path.read_text())
+        path = folder / 'project.json'; data = json.loads(path.read_text(encoding='utf-8'))
         data['assets'] = [a for a in data['assets'] if a['role'] != 'subtitles']
         path.write_text(json.dumps(data), encoding='utf-8')
         report = delivery.verify(folder)
@@ -110,7 +110,7 @@ class DeliveryRevisions(unittest.TestCase):
 
     def test_old_receipt_can_enter_revision_without_bypassing_new_review_gate(self):
         folder, _ = self.build(self.spec(bound=False))
-        manifest=folder/'project.json';data=json.loads(manifest.read_text())
+        manifest=folder/'project.json';data=json.loads(manifest.read_text(encoding='utf-8'))
         data['delivery_level']='native_complete'  # Model an old-format stored task.
         manifest.write_text(json.dumps(data),encoding='utf-8')
         task=session.fresh_task({});task.pop('qa_contract')
@@ -130,7 +130,7 @@ class DeliveryRevisions(unittest.TestCase):
         self.assertEqual(rejected.returncode,2);self.assertEqual(state_path.read_bytes(),old)
         revised=update({'name_size':20},'overrides')
         self.assertEqual(revised.returncode,0,revised.stderr)
-        current=json.loads(state_path.read_text())
+        current=json.loads(state_path.read_text(encoding='utf-8'))
         self.assertEqual(current['task']['status'],'working')
         self.assertEqual(current['task']['deliverables'],{})
         self.assertEqual(current['revision_history'][-1]['task'],task)
