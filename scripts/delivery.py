@@ -12,6 +12,9 @@ import shutil
 import subprocess
 import sys
 
+REQUIRED_ROLES={'video','cover','subtitles','caption_source','cover_source','render_master','source_map'}
+NATIVE_ROLES=REQUIRED_ROLES|{'native_project_archive'}
+
 def digest(p):
     h=hashlib.sha256()
     with p.open('rb') as f:
@@ -37,8 +40,31 @@ def copy_file(source,target):
         if p.returncode==0:return
     shutil.copy2(source,target)
 
-def native_valid(native,revision,roles):
-    return all(native.get(k) is True for k in ['same_revision','opened_in_editor','linked_media_verified','render_checked']) and native.get('revision')==revision and 'native_project_archive' in roles
+def native_errors(native,revision,assets):
+    """Check recorded observations against exact files, not the truth of a UI."""
+    errors=[]
+    if (not all(native.get(k) is True for k in ('same_revision','opened_in_editor','linked_media_verified','render_checked'))
+            or native.get('revision')!=revision):
+        errors.append('native_final_evidence_missing_or_stale')
+    if native.get('editor') not in ('Jianying','CapCut'):
+        errors.append('native_final_editor_identity_missing')
+    if not all(isinstance(native.get(k),str) and native[k].strip()
+               for k in ('saved_project_id','reopened_project_id','observed_at')):
+        errors.append('native_saved_or_reopened_project_identity_missing')
+    if native.get('restore_scope') not in ('same_machine_same_path','same_machine_relocated','cross_machine'):
+        errors.append('native_restore_scope_missing')
+    rows={a['role']:a for a in assets}
+    evidence=native.get('evidence_roles')
+    if (not isinstance(evidence,list) or not evidence or
+            any(not isinstance(k,str) or k in NATIVE_ROLES or k not in rows for k in evidence)):
+        errors.append('native_reopen_observation_missing')
+        evidence=[]
+    bound=native.get('asset_sha256',{})
+    if not isinstance(bound,dict):bound={}
+    for role in sorted(NATIVE_ROLES|set(evidence)):
+        if role not in rows or bound.get(role)!=rows[role]['sha256']:
+            errors.append('native_bound_asset_missing_or_stale:'+role)
+    return errors
 
 def build(spec,root,out):
     root=root.resolve(strict=True);out=within(out,root)
@@ -51,7 +77,7 @@ def build(spec,root,out):
         if source.is_symlink() or not source.is_file():raise ValueError('Asset must be a real file: '+a['role'])
         if name.casefold() in names or a['role'] in roles:raise ValueError('Duplicate filename or role (case-insensitive)')
         names.add(name.casefold());roles.add(a['role']);assets.append((a,source))
-    if not {'video','cover','subtitles','caption_source','cover_source','render_master','source_map'}<=roles:raise ValueError('Missing a required current-revision deliverable or editable source')
+    if not REQUIRED_ROLES<=roles:raise ValueError('Missing a required current-revision deliverable or editable source')
     budget=sum(p.stat().st_size for _,p in assets)+1024**3
     if shutil.disk_usage(root).free<budget:raise ValueError('Insufficient space for self-contained delivery and reserve')
     out.mkdir(parents=True)
@@ -63,7 +89,7 @@ def build(spec,root,out):
         entries.append({'role':a['role'],'path':a['name'],'bytes':target.stat().st_size,'sha256':h})
     native=spec.get('native',{})
     # A folder or an old draft is not evidence of a matching final native project.
-    native_ok=native_valid(native,spec['revision'],roles)
+    native_ok=not native_errors(native,spec['revision'],entries)
     result={'schema_version':1,'revision':spec['revision'],'created_at':datetime.now(timezone.utc).isoformat(),'delivery_level':'native_complete' if native_ok else 'review_bundle_native_pending','native':native,'assets':entries,'render':spec['render'],'hearing':spec.get('hearing','not_verified'),'limitations':spec.get('limitations',[]),'source_policy':'All listed paths relative to this bundle; software and resource requirements documented separately. Native app archives may retain their own managed caches.'}
     (out/'project.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n', encoding='utf-8')
     copy_file(Path(__file__).resolve(),out/'delivery.py')
@@ -71,12 +97,19 @@ def build(spec,root,out):
 
 def verify(folder):
     folder=Path(folder).resolve(strict=True);p=json.loads((folder/'project.json').read_text(encoding='utf-8-sig'));errors=[]
-    if p.get('delivery_level')=='native_complete' and not native_valid(p.get('native',{}),p['revision'],{a['role'] for a in p['assets']}):errors.append('native_final_evidence_missing_or_stale')
+    roles=[a['role'] for a in p['assets']]
+    names=[str(relative(a['path'])).casefold() for a in p['assets']]
+    if len(set(roles))!=len(roles) or len(set(names))!=len(names):errors.append('duplicate_asset_role_or_path')
+    if not REQUIRED_ROLES<=set(roles):errors.append('required_current_revision_asset_missing')
+    native_checks=native_errors(p.get('native',{}),p['revision'],p['assets'])
+    if p.get('delivery_level')=='native_complete':errors.extend(native_checks)
+    verified=0
     for a in p['assets']:
         target=within(folder/str(relative(a['path'])),folder)
         if not target.is_file():errors.append(a['role']+':missing')
         elif target.stat().st_size!=a['bytes'] or digest(target)!=a['sha256']:errors.append(a['role']+':changed')
-    return {'revision':p['revision'],'delivery_level':p['delivery_level'],'assets_verified':len(p['assets'])-len(errors),'errors':errors,'status':'passed' if not errors else 'failed','native_final_verified':p['delivery_level']=='native_complete'}
+        else:verified+=1
+    return {'revision':p['revision'],'delivery_level':p['delivery_level'],'assets_verified':verified,'errors':errors,'status':'passed' if not errors else 'failed','native_final_verified':p['delivery_level']=='native_complete' and not errors,'native_pending_checks':native_checks,'verification_scope':'File identities and recorded native observations only; not proof of actual editor reopening, pixels or listening.'}
 
 def validate_ass(path):
     path=Path(path)

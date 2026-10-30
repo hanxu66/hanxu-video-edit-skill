@@ -88,6 +88,69 @@ class Feedback(unittest.TestCase):
         self.assertEqual(data['profile']['display_name'],'测试者');self.assertIn('editingExecution',data['task'])
         self.assertNotIn('editingExecution',data)
 
+    def saved_review(self):
+        state=self.state();task=state['task']
+        video=self.media('review.mp4');cover=self.work/'cover.png';cover.write_bytes(b'synthetic state fixture, not a rendered cover')
+        report=self.write('integrity.json',inspect_media(video,self.ff,self.fp))
+        task.update(stage='review',status='review',audio=str(video),checks={'visual_preview_ready':True,'visual_preview_approved':True,'interview_structure_approved':True},
+                    preflight={'chatcut_project_readable':True,'look_controls_available':True,'native_preview_reopened':True,'native_preview_render_checked':True},
+                    deliverables={'video':str(video),'cover':str(cover),'media_integrity':str(report)})
+        task['editingExecution']={'revision':'r1','checks':{'identity':{'actual':'old'}},'history':[]}
+        session.validate(state,self.work)
+        directory=self.work/'.video-agent';directory.mkdir(exist_ok=True)
+        path=directory/'session.json';path.write_text(json.dumps(state),encoding='utf-8')
+        return state,path
+
+    def test_local_effect_change_leaves_old_review_in_history_and_requires_new_preview(self):
+        state,path=self.saved_review();old=state['task'];files={p:Path(p).read_bytes() for p in old['deliverables'].values()}
+        patch=self.write('name.json',{'name_size':old['profile_snapshot']['name_size']+1})
+        r=self.cli('session.py','--workspace',self.work,'update','--scope','overrides','--data-file',patch)
+        self.assertEqual(r.returncode,0,r.stderr)
+        updated=json.loads(path.read_text());task=updated['task']
+        self.assertNotEqual(task['revision'],old['revision'])
+        self.assertEqual((task['status'],task['stage']),('working','appearance'))
+        self.assertEqual(task['deliverables'],{})
+        self.assertNotIn('visual_preview_approved',task['checks'])
+        self.assertNotIn('editingExecution',task)
+        self.assertNotIn('native_preview_reopened',task['preflight'])
+        self.assertTrue(task['preflight']['chatcut_project_readable'])
+        self.assertTrue(task['checks']['interview_structure_approved'])
+        self.assertEqual(task['script'],old['script']);self.assertEqual(task['profile_snapshot'],old['profile_snapshot'])
+        self.assertEqual(updated['revision_history'][-1]['task'],old)
+        for p,data in files.items():self.assertEqual(Path(p).read_bytes(),data)
+        self.assertEqual(session.plan(updated,self.work)['action'],'make_visual_preview')
+        task['status']='review'
+        with self.assertRaisesRegex(ValueError,'actual video'):session.validate(updated,self.work)
+
+    def test_effective_noop_and_future_profile_do_not_revise_current_review(self):
+        state,path=self.saved_review();old=state['task']
+        for scope,patch in [('overrides',{'name_size':old['profile_snapshot']['name_size']}),('profile',{'name_size':old['profile_snapshot']['name_size']+3})]:
+            r=self.cli('session.py','--workspace',self.work,'update','--scope',scope,'--data-file',self.write('patch.json',patch))
+            self.assertEqual(r.returncode,0,r.stderr)
+            current=json.loads(path.read_text())
+            self.assertEqual(current['task']['revision'],'r1');self.assertEqual(current['task']['status'],'review')
+            self.assertEqual(current['task']['deliverables'],old['deliverables']);self.assertNotIn('revision_history',current)
+
+    def test_speed_revision_preserves_unrelated_effects_and_pause(self):
+        state,path=self.saved_review();state['task']['status']='paused';state['task']['revision']='custom-final'
+        path.write_text(json.dumps(state),encoding='utf-8')
+        patch=self.write('speed.json',{'speed':1.3})
+        r=self.cli('session.py','--workspace',self.work,'update','--scope','overrides','--data-file',patch)
+        self.assertEqual(r.returncode,0,r.stderr)
+        current=json.loads(path.read_text());task=current['task']
+        self.assertNotEqual(task['revision'],'custom-final');self.assertEqual(task['stage'],'editing');self.assertEqual(task['status'],'paused')
+        self.assertEqual(session.effective(current)['speed'],1.3)
+        for key in ('beauty_parameters','body_parameters','color_adjustments','audio_gain_db'):
+            self.assertEqual(session.effective(current)[key],session.effective(state)[key])
+        self.assertEqual(session.plan(current,self.work)['action'],'paused')
+
+    def test_first_settings_before_production_do_not_create_a_revision(self):
+        r=self.cli('session.py','--workspace',self.work,'update','--scope','overrides','--data-file',self.write('initial.json',{'name_size':20}))
+        self.assertEqual(r.returncode,0,r.stderr)
+        state=json.loads(r.stdout)
+        self.assertEqual(state['task']['revision'],'r1');self.assertEqual(state['task']['stage'],'intake')
+        self.assertNotIn('revision_history',state)
+
     def media(self,name,audio='sine=frequency=440:sample_rate=48000'):
         if not self.ff or not self.fp:
             if os.environ.get('REQUIRE_MEDIA_TEST'):self.fail('CI must run media tests')
@@ -166,12 +229,17 @@ class Feedback(unittest.TestCase):
         current.write_bytes(original.read_bytes()+b'different delivered revision')
         cover=self.work/'cover.png';cover.write_bytes(b'synthetic cover fixture')
         assets=[]
-        for role in ('video','cover','subtitles','caption_source','cover_source','render_master','source_map','native_project_archive'):
+        for role in ('video','cover','subtitles','caption_source','cover_source','render_master','source_map','native_project_archive','reopen_observation'):
             source=original if role in ('video','render_master') else cover if role=='cover' else self.work/(role+'.txt')
             if not source.exists():source.write_text('synthetic fixture',encoding='utf-8')
             assets.append({'role':role,'path':str(source),'name':role+source.suffix})
         spec={'revision':'r1','assets':assets,'render':{},'native':{'revision':'r1',
               'same_revision':True,'opened_in_editor':True,'linked_media_verified':True,'render_checked':True}}
+        # Synthetic receipt tests the gate; no native app was opened here.
+        spec['native'].update(editor='Jianying',saved_project_id='synthetic-project',
+            reopened_project_id='synthetic-restored-project',restore_scope='same_machine_relocated',
+            observed_at='2026-10-30T20:30:00+08:00',evidence_roles=['reopen_observation'],
+            asset_sha256={a['role']:digest(a['path']) for a in assets})
         bundle=self.work/'bundle';delivery.build(spec,self.work,bundle)
         state=self.state();task=state['task'];task.update(status='review',delivery_scope='formal',
             deliverables={'video':str(current),'cover':str(cover),'delivery_manifest':str(bundle/'project.json')})

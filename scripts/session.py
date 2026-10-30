@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import platform
 import plistlib
+import re
 import shutil
 import sys
 sys.dont_write_bytecode = True
@@ -117,7 +118,7 @@ def fresh_task(profile):
                 source_protection={}, visual_plan={}, scene_plan={}, voice_plan={'status':'not_selected'}, source_integrity=None)
 
 
-def validate(state, root):
+def validate(state, root, check_completion=True):
     settings_valid(state['profile'])
     task = state.get('task')
     if task is None:
@@ -151,9 +152,9 @@ def validate(state, root):
     for label, raw in task['deliverables'].items():
         if not isinstance(raw, str) or not inside(Path(raw), root).is_file():
             raise ValueError('Deliverable does not exist inside workspace: ' + label)
-    if task['status'] in ('review', 'accepted') and not {'video', 'cover'} <= set(task['deliverables']):
+    if check_completion and task['status'] in ('review', 'accepted') and not {'video', 'cover'} <= set(task['deliverables']):
         raise ValueError('Review/acceptance requires actual video and cover files')
-    if task.get('qa_contract')==2 and task['status'] in ('review','accepted'):
+    if check_completion and task.get('qa_contract')==2 and task['status'] in ('review','accepted'):
         raw=task['deliverables'].get('media_integrity')
         if not raw:raise ValueError('Final review requires media_integrity report for this exact video; environment readiness is not final QA')
         from check_subtitle_render import digest
@@ -168,7 +169,7 @@ def validate(state, root):
             from manage_video_editing_run import checklist
             if task.get('editingExecution',{}).get('revision')!=task['revision'] or checklist(task)['pending']:
                 raise ValueError('Formal final delivery requires the current nine-item packaging evidence checklist')
-    if task['delivery_scope'] == 'formal' and task['status'] in ('review', 'accepted'):
+    if check_completion and task['delivery_scope'] == 'formal' and task['status'] in ('review', 'accepted'):
         raw = task['deliverables'].get('delivery_manifest')
         if not raw:
             raise ValueError('Formal delivery requires a matching, verified native-project delivery manifest; use review scope for a preview')
@@ -176,11 +177,14 @@ def validate(state, root):
         if manifest.get('revision') != task['revision'] or manifest.get('delivery_level') != 'native_complete':
             raise ValueError('Native final project is missing, stale or not verified')
         from delivery import verify
-        if verify(Path(raw).parent)['errors']:
-            raise ValueError('Native delivery assets have changed or are missing')
+        native_check = verify(Path(raw).parent)
+        if native_check['errors']:
+            raise ValueError('Native delivery evidence is incomplete, stale or missing: ' +
+                             ', '.join(native_check['errors']) +
+                             '; preserve existing files, record the current reopen observation and build a new delivery')
         assets={x['role']:x for x in manifest['assets']}
         from check_subtitle_render import digest
-        for role in ('video','cover'):
+        for role in {'video','cover'} | (set(assets) & set(task['deliverables'])):
             if role not in assets or assets[role]['sha256']!=digest(task['deliverables'][role]):
                 raise ValueError('Native bundle '+role+' differs from current delivered file')
 
@@ -198,6 +202,43 @@ def effective(state):
             else:
                 result[key] = value
     return result
+
+
+def revise_overrides(state, previous):
+    """Keep old artifacts as history, never as proof of changed settings."""
+    before, after = effective(previous), effective(state)
+    changed = sorted(key for key in SETTINGS if before[key] != after[key])
+    old = previous.get('task')
+    if not changed or not old:
+        return
+    produced = (old['deliverables'] or old.get('editingExecution') or
+                old['checks'].get('visual_preview_ready') or
+                old['stage'] in STAGES[STAGES.index('editing'):])
+    if not produced:
+        return
+    task = state['task']
+    # Keep the complete prior task once; no recursive snapshots or file moves.
+    state.setdefault('revision_history', []).append({
+        'saved_at': now(), 'reason': 'effective_overrides_changed',
+        'changed_settings': changed, 'task': deepcopy(old)})
+    match = re.fullmatch(r'r(\d+)', old['revision'])
+    task['revision'] = ('r' + str(int(match.group(1)) + 1) if match
+                        else old['revision'] + '-' + uuid.uuid4().hex[:8])
+    task['deliverables'] = {}
+    # Content decisions remain valid; rendered/approved/export evidence does not.
+    task['checks'] = {key: value for key, value in task['checks'].items()
+                      if key == 'interview_structure_approved'}
+    task['preflight'] = {key: value for key, value in task['preflight'].items()
+                         if key in ('chatcut_project_readable', 'editable_handoff_available',
+                                    'jianying_control_available', 'look_controls_available',
+                                    'motion_graphics_available', 'voice_generation_available')}
+    # Its requirements and actual values described the old revision. Re-register
+    # the new targets; the archived record retains all reusable old evidence.
+    task.pop('editingExecution', None)
+    task['stage'] = ('editing' if set(changed) & {'speed', 'voice_source', 'add_bgm'}
+                     else 'appearance')
+    task['status'] = 'paused' if old['status'] == 'paused' else 'working'
+    task['blocker'] = None
 
 
 def plan(state, root):
@@ -363,7 +404,10 @@ def main():
         result['dependency_report'] = assess(root, 'content')
         print(json.dumps(result, ensure_ascii=False, indent=2)); return
     state = json.loads(path.read_text(encoding='utf-8-sig')) if path.exists() else {'schema_version': 1, 'profile': {}, 'task': None}
-    validate(state, root)
+    # A corrective update may move an old incomplete review into a new working
+    # revision. Validate its shape now and the full resulting state before save;
+    # never require an obsolete completion receipt just to begin the repair.
+    validate(state, root, check_completion=args.command != 'update')
     mutation = args.command in ('init', 'new', 'update', 'protect-source')
     protection_result = protect_source(state, root, args.reserve_gb) if args.command == 'protect-source' else None
     if args.command == 'new':
@@ -386,7 +430,9 @@ def main():
             if state['task'] is None:
                 state['task'] = fresh_task(state['profile'])
             if args.scope == 'overrides':
+                previous = deepcopy(state)
                 merge_settings(state['task']['overrides'], patch)
+                revise_overrides(state, previous)
             else:
                 if set(patch) - TASK_KEYS:
                     raise InputError('Unknown task keys; use --scope overrides for settings such as speed or display_name',received=sorted(set(patch)-TASK_KEYS),allowed=sorted(TASK_KEYS))
