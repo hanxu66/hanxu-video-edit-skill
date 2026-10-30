@@ -4,27 +4,22 @@
 
 把视频或稿件交给 Codex，通过对话完成剪辑。已有完整默认效果；看过实际小样后，可以说“美颜轻一点”“字幕大一点”“标题往下移”。
 
-当前版本：**0.6.0**，同一 skill 适配 **macOS 和原生 Windows**。根目录的 `SKILL.md` 就是技能入口。安装一次后，在自己的本地剪辑工作目录中使用，无需把下载目录建成指定的 Codex 项目，也不用寻找隐藏文件。
+当前版本：**0.6.1**，同一 skill 适配 **macOS 和原生 Windows**。根目录的 `SKILL.md` 就是技能入口。安装一次后，在自己的本地剪辑工作目录中使用，无需把下载目录建成指定的 Codex 项目，也不用寻找隐藏文件。
 
 本版聚焦 **Codex桌面版**。保留全部场景与默认设置，补齐首次连接、声音状态、素材完整性、字幕批量质检、包装清单、容量预算和最终交付防错。Claude Code、NewMax、WorkBuddy尚未完成本skill的完整适配，不能照搬本页流程声称已验证。
 
 **第一次使用需要什么？** Codex负责理解你的需求，本skill提供剪辑方法，ChatCut Desktop负责实际时间线；完整美颜、调色和可编辑工程交付还需本机剪映。skill包不包含这些软件或账户。你不用先研究参数，告诉Codex“带我检查并开始”，它会一次提示一个必要动作。
 
-## 安装
+## 安装与更新
 
-### 从 GitHub 安装
+完整步骤见[安装与更新](INSTALL.md)：安装完整技能 → 确认位置和版本 → 开始任务；更新前保留个人记录与本地修改，将旧版备份到技能发现目录之外，失败可恢复。
 
-把下面这段话发给自己电脑上的 Codex：
 
-> 请使用 skill-installer，将 https://github.com/hanxu66/hanxu-video-edit-skill 仓库根目录（版本 v0.6.0）安装为我自己的技能，技能名为 hanxu-video-edit-skill。若已有旧版，先保留旧版再更新，不改其他技能。请识别我的Mac或Windows系统，检查入口、当前工具和资源，带我开始。
+```text
+用 $hanxu-video-edit-skill 带我开始。原片在【自己的路径】。先检查本机Codex、ChatCut Desktop及本次需要的剪映连接，按原有完整默认效果做一段实际小样，确认约定工程交付能力再继续。需要我操作时一次告诉我一件事。
+```
 
-### 已经拿到旧压缩包
-
-这次只更新 GitHub，原先另行分发的 0.4.0 压缩包保持原样；要用本次改进，请直接把上面的 GitHub 安装/更新指令发给 Codex。旧包仍可完整解压后安装，里面含有 `SKILL.md` 的 `hanxu-video-edit-skill` 文件夹就是技能；把实际位置告诉 Codex：
-
-> 请把这个位置的韩叙视频剪辑 skill 安装为我自己的技能：〈解压后的文件夹位置〉。若已有旧版，先保留旧版再更新。请检查安装结果，不要把素材或任务保存在技能安装目录。
-
-以上安装操作由 Codex 完成，不需要手动移动隐藏目录。若安装后当前对话还没有识别到技能，在下一轮调用；仍未出现时重开 Codex 再调用。技能文件夹可以含有多个方法和脚本，它仍是一项技能。
+本机Codex桌面版与ChatCut Desktop；完整美颜、调色及可编辑工程还需本机剪映和可用资源。按实际需要检查Python、FFmpeg及字体，安装Skill不等于软件已连接，也不自动购买服务。
 
 ## 首次连接剪辑软件
 
@@ -87,4 +82,4 @@ Windows可以直接给`D:\视频素材\原片.mp4`这样的实际路径，中文
 
 直接在原剪辑对话中给出时间点和修改要求。无法继续时，提供“当前步骤＋报错截图＋版本号”；无需先发原片、密码或整份私人日志。给你本技能的人也可以据此定位问题。
 
-[GitHub](https://github.com/hanxu66/hanxu-video-edit-skill) · [v0.6.0 源码](https://github.com/hanxu66/hanxu-video-edit-skill/tree/v0.6.0) · [双系统自动化检查](https://github.com/hanxu66/hanxu-video-edit-skill/actions/workflows/compatibility.yml)
+[GitHub](https://github.com/hanxu66/hanxu-video-edit-skill) · [v0.6.1 源码](https://github.com/hanxu66/hanxu-video-edit-skill/tree/v0.6.1) · [双系统自动化检查](https://github.com/hanxu66/hanxu-video-edit-skill/actions/workflows/compatibility.yml)
