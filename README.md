@@ -6,7 +6,9 @@
 
 给出小样时，Codex会主动说明本次能调整的项目，并举例告诉你怎么提修改。你可以说“瘦脸、瘦身少一点”“画面太白，调自然一点，其他不变”，也可以指出“30秒之后偏暗”。默认只改当前视频；明确说“以后都这样”才保存为长期偏好。
 
-当前版本：**0.6.2**，同一 skill 适配 **macOS 和原生 Windows**。根目录的 `SKILL.md` 就是技能入口。安装一次后，在自己的本地剪辑工作目录中使用，无需把下载目录建成指定的 Codex 项目，也不用寻找隐藏文件。
+当前版本：**0.6.3**，同一 skill 适配 **macOS 和原生 Windows**。根目录的 `SKILL.md` 就是技能入口。安装一次后，在自己的本地剪辑工作目录中使用，无需把下载目录建成指定的 Codex 项目，也不用寻找隐藏文件。
+
+本版补入了局部返修后视频、字幕、封面与保存重开工程的一致性实测，并说明遇到容器不符时怎样保留原件、仅重新封装并复查。真实剪映验证限同一台Mac、同一路径；声音听辨与跨电脑恢复仍未验证，详见[验证范围](docs/验证范围.md)。操作和检查由Codex完成。
 
 本版聚焦 **Codex桌面版**。保留全部场景与默认设置，补齐首次连接、声音状态、素材完整性、字幕批量质检、包装清单、容量预算和最终交付防错。Claude Code、NewMax、WorkBuddy尚未完成本skill的完整适配，不能照搬本页流程声称已验证。
 
@@ -84,4 +86,4 @@ Windows可以直接给`D:\视频素材\原片.mp4`这样的实际路径，中文
 
 直接在原剪辑对话中给出时间点和修改要求。无法继续时，提供“当前步骤＋报错截图＋版本号”；无需先发原片、密码或整份私人日志。给你本技能的人也可以据此定位问题。
 
-[GitHub](https://github.com/hanxu66/hanxu-video-edit-skill) · [v0.6.2 源码](https://github.com/hanxu66/hanxu-video-edit-skill/tree/v0.6.2) · [双系统自动化检查](https://github.com/hanxu66/hanxu-video-edit-skill/actions/workflows/compatibility.yml)
+[GitHub](https://github.com/hanxu66/hanxu-video-edit-skill) · [v0.6.3 源码](https://github.com/hanxu66/hanxu-video-edit-skill/tree/v0.6.3) · [双系统自动化检查](https://github.com/hanxu66/hanxu-video-edit-skill/actions/workflows/compatibility.yml)
